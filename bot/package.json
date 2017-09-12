@@ -1,0 +1,29 @@
+{
+  "name": "probot",
+  "version": "1.0.0",
+  "description": "Prohackathon-2017. Bot named ProBOT helps in various day to day activity.",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "#KAOS",
+  "keywords": [
+    "botbuilder",
+    "bots",
+    "chatbots",
+    "proBOT"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vedang18/ProBOT"
+  },
+  "dependencies": {
+    "botbuilder": "^3.8.2",
+    "bluebird": "^3.4.7",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "pug": "^2.0.0-beta6",
+    "serve-favicon": "^2.3.2",
+    "dotenv-extended": "^1.0.4",
+    "lodash": "^4.17.4"
+  }
+}
