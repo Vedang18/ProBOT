@@ -7,7 +7,12 @@ var connector = new builder.ChatConnector({
 
 
 var bot = new builder.UniversalBot(connector, function (session) {
-    session.send('echo: ' + session.message.text);
+    var msg = session.message.text;
+    if(msg === ''){
+        session.send('welcome_title');
+    } else {
+        session.send('echo: ' + session.message.text);
+    }
 });
 
 // Enable Conversation Data persistence
@@ -48,7 +53,6 @@ bot.on('conversationUpdate', function (message) {
     }
 });
 
-// Cache of localized regex to match selection from main options
 var LocalizedRegexCache = {};
 function localizedRegex(session, localeKeys) {
     var locale = session.preferredLocale();
