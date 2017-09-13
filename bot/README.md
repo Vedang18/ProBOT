@@ -17,6 +17,6 @@ Environment details:
 5. To test use [Microsoft Bot Framework](https://github.com/Microsoft/BotFramework-Emulator/releases/tag/v3.5.31).
 6. Point the emulator to http://localhost:3978/api/messages
 
-Preffered IDE: [**VSCode**](https://code.visualstudio.com/)
+Preffered IDE: [**VSCode**](https://code.visualstudio.com/).
 
     
