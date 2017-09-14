@@ -5,15 +5,31 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
-
-var bot = new builder.UniversalBot(connector, function (session) {
-    var msg = session.message.text;
-    if(msg === ''){
-        session.send('welcome_title');
-    } else {
-        session.send('echo: ' + session.message.text);
+// This is a dinner reservation bot that uses a waterfall technique to prompt users for input.
+var bot = new builder.UniversalBot(connector, [
+    function (session) {
+        session.send("Welcome to the dinner reservation.");
+        builder.Prompts.time(session, "Please provide a reservation date and time (e.g.: June 6th at 5pm)");
+    },
+    function (session, results) {
+        session.dialogData.reservationDate = builder.EntityRecognizer.resolveTime([results.response]);
+        builder.Prompts.text(session, "How many people are in your party?");
+    },
+    function (session, results) {
+        session.dialogData.partySize = results.response;
+        builder.Prompts.text(session, "Who's name will this reservation be under?");
+    },
+    function (session, results) {
+        session.dialogData.reservationName = results.response;
+        builder.Prompts.choice(session, "Table cloth color preferance?", "red|green|blue", { listStyle: 3 });
+    },
+    function (session, results) {
+        session.dialogData.clothColor =  results.response.entity;
+        // Process request and display reservation details
+        session.send(`Reservation confirmed. Reservation details: <br/>Date/Time: ${session.dialogData.reservationDate} <br/>Party size: ${session.dialogData.partySize} <br/>Reservation name: ${session.dialogData.reservationName} <br/>Table cloth color: ${session.dialogData.clothColor}`);
+        session.endDialog();
     }
-});
+]);
 
 // Enable Conversation Data persistence
 bot.set('persistConversationData', true);
