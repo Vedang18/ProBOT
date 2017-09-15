@@ -5,31 +5,51 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
+var DialogLabels = {
+    book_room: 'Book a room',
+    cancel_booking: 'Cancel room booking',
+};
+
 // This is a dinner reservation bot that uses a waterfall technique to prompt users for input.
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        session.send("Welcome to the dinner reservation.");
-        builder.Prompts.time(session, "Please provide a reservation date and time (e.g.: June 6th at 5pm)");
+        builder.Prompts.choice(
+            session,
+            'Please enter one of the choice',
+            [DialogLabels.book_room, DialogLabels.cancel_booking],
+            {
+                maxRetries: 3,
+                retryPrompt: 'Not a valid option'
+            });
     },
-    function (session, results) {
-        session.dialogData.reservationDate = builder.EntityRecognizer.resolveTime([results.response]);
-        builder.Prompts.text(session, "How many people are in your party?");
-    },
-    function (session, results) {
-        session.dialogData.partySize = results.response;
-        builder.Prompts.text(session, "Who's name will this reservation be under?");
-    },
-    function (session, results) {
-        session.dialogData.reservationName = results.response;
-        builder.Prompts.choice(session, "Table cloth color preferance?", "red|green|blue", { listStyle: 3 });
-    },
-    function (session, results) {
-        session.dialogData.clothColor =  results.response.entity;
-        // Process request and display reservation details
-        session.send(`Reservation confirmed. Reservation details: <br/>Date/Time: ${session.dialogData.reservationDate} <br/>Party size: ${session.dialogData.partySize} <br/>Reservation name: ${session.dialogData.reservationName} <br/>Table cloth color: ${session.dialogData.clothColor}`);
-        session.endDialog();
+    function (session, result) {
+        if (!result.response) {
+            // exhausted attemps and no selection, start over
+            session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
+            return session.endDialog();
+        }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('Failed with message: %s', err.message);
+            session.endDialog();
+        });
+
+        // continue on proper dialog
+        var selection = result.response.entity;
+        switch (selection) {
+            case DialogLabels.book_room:
+                return session.beginDialog('bookrooms');
+        }   
     }
 ]);
+var room = require('./book-room');
+
+bot.dialog('bookrooms',room );
+
+bot.on('error', function (e) {
+    console.log('And error ocurred', e);
+});
 
 // Enable Conversation Data persistence
 bot.set('persistConversationData', true);
