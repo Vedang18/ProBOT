@@ -24,7 +24,9 @@ public class HolidayService implements IHolidayService
     @Override
     public List<Holidays> getHolidaysafter(Date date)
     {
-	return holidayRepository.findHolidaysafter(date);
+	List<Holidays> holidays = new ArrayList<>();
+	holidayRepository.findHolidaysafter(date).forEach(e -> holidays.add(e));
+	return holidays;
     }
 
     @Override

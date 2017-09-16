@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * @author Vedang, Created on Sep 17, 2017
  *
@@ -23,6 +25,7 @@ public class Holidays implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int uid;
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date date;
     private String day;
     private String reason;

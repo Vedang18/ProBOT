@@ -1,8 +1,6 @@
 package com.prorigo.controller;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -36,9 +34,8 @@ public class HolidayController
     @RequestMapping("/after/{date}") 
     public List<Holidays> getHolidaysAfter(@PathVariable String date) throws ParseException
     {
-	SimpleDateFormat sdf = new SimpleDateFormat("DD-MM-YYYY");
+	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	Date actualDate = sdf.parse(date);
-	System.out.println(actualDate);
 	return holidayService.getHolidaysafter(actualDate);
     }
 }

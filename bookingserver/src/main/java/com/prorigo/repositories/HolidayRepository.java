@@ -1,7 +1,6 @@
 package com.prorigo.repositories;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,6 +16,6 @@ import com.prorigo.entities.Holidays;
 @Repository
 public interface HolidayRepository extends CrudRepository<Holidays, Integer>
 {
-    @Query("SELECT date FROM Holidays WHERE date > :date")
-    List<Holidays> findHolidaysafter(@Param("date") Date date);
+    @Query("SELECT h FROM Holidays h WHERE date > :date")
+    Iterable<Holidays> findHolidaysafter(@Param("date") Date date);
 }
