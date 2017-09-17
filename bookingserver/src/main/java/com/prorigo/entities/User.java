@@ -2,6 +2,7 @@ package com.prorigo.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "users")
+
 public class User implements Serializable
 {
 
@@ -22,6 +24,7 @@ public class User implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int uid;
+    @Column(unique=true)
     private String channelId;
     private String username;
     private String password;

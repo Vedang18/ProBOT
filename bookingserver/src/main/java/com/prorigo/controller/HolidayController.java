@@ -28,7 +28,8 @@ public class HolidayController
     @RequestMapping("/all") 
     public List<Holidays> getAllHolidays()
     {
-	return holidayService.getAllHolidays();
+	List<Holidays> allHolidays = holidayService.getAllHolidays();
+	return allHolidays;
     }
     
     @RequestMapping("/after/{date}") 
