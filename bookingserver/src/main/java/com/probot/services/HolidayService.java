@@ -1,4 +1,4 @@
-package com.prorigo.services;
+package com.probot.services;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.prorigo.entities.Holidays;
-import com.prorigo.repositories.HolidayRepository;
+import com.probot.entities.Holidays;
+import com.probot.repositories.HolidayRepository;
 
 /**
  * @author Vedang, Created on Sep 17, 2017

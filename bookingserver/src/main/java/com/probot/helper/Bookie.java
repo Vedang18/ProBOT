@@ -1,7 +1,10 @@
-package com.prorigo.htmlunit;
+package com.probot.helper;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
@@ -12,18 +15,22 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.prorigo.entities.Meeting;
-import com.prorigo.entities.User;
+import com.probot.entities.Meeting;
+import com.probot.entities.User;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
  *
  */
+@Component
 public class Bookie
 {
 
     private static final String WEBSITE = "apps.prorigo.com";
     private static final String BOOKING = "/conference/Booking";
+
+    @Autowired
+    PasswordCoder passwordCoder;
 
     public void roomBooking(User user, Meeting meeting) throws Exception
     {
@@ -34,7 +41,8 @@ public class Bookie
 	    // set proxy username and password
 	    DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider) webClient
 		    .getCredentialsProvider();
-	    credentialsProvider.addNTLMCredentials(user.getUsername(), user.getPassword(), WEBSITE, 80, "", "");
+	    credentialsProvider.addNTLMCredentials(user.getUsername(), passwordCoder.decrypt(user.getPassword()),
+		    WEBSITE, 80, "", "");
 
 	    String pageUrl = new StringBuilder("http://").append(WEBSITE).append(BOOKING).toString();
 	    HtmlPage page = webClient.getPage(pageUrl);
@@ -70,8 +78,8 @@ public class Bookie
 	String median = " AM";
 	if (hour > 12)
 	{
-	hour = hour % 12;
-	median = " PM";
+	    hour = hour % 12;
+	    median = " PM";
 	}
 	String meetingTime = hour + ":" + min + median;
 	return meetingTime;

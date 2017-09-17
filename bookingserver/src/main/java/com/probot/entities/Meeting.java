@@ -1,4 +1,4 @@
-package com.prorigo.entities;
+package com.probot.entities;
 
 import java.util.Date;
 import java.util.List;
