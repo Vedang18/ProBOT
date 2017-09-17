@@ -1,0 +1,27 @@
+Flows:
+1. Book conf-4.
+Question to ask: 
+When?
+Reason?
+People?
+
+2. Book room.
+Question to ask: 
+Which?
+When?
+Reason?
+People?
+
+3. Book conf-4 form 4 to 5.
+Question to ask: 
+Reason?
+People?
+
+4. Book conf-4 from 4 to 5 for staus meeting.
+Question to ask: 
+People?
+
+5. Book conf-4 from 4 to 5 for staus meeting with Vedang
+
+I want to cancel my room booking
+select which booking to cancel:

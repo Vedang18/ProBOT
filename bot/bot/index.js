@@ -1,4 +1,5 @@
 var builder = require('botbuilder');
+var logger = require('../log4js').logger;
 
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
@@ -65,7 +66,8 @@ bot.set('localizerSettings', {
 // Trigger secondary dialogs when 'settings' or 'support' is called
 bot.use({
     botbuilder: function (session, next) {
-        var text = session.message.text;
+        var text = session.message.text.toLowerCase();
+        logger.debug(session.message);
         var supportRegex = localizedRegex(session, ['help']);
 
         if (supportRegex.test(text)) {
