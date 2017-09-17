@@ -14,6 +14,7 @@ var DialogLabels = {
 // This is a dinner reservation bot that uses a waterfall technique to prompt users for input.
 var bot = new builder.UniversalBot(connector, [
     function (session) {
+        logger.info('default dialog triggered');
         builder.Prompts.choice(
             session,
             'Please enter one of the choice',
