@@ -1,6 +1,8 @@
 {
     "welcome_title": "Hello, I am ProBOT",
+    "welcome_info": "I am here to help you with your day to day tasks. I can book rooms, show holidays, and more. Just tell me.",
     "welcome_subtitle": "How can I help?",
+    "welcome_sorry": "I am sorry, I couldn't understand you. Send Hi!",
     "help": "Help",
     "thank_you": "Have a nice day!"
 }

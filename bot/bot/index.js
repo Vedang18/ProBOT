@@ -1,6 +1,8 @@
 var builder = require('botbuilder');
 var logger = require('../log4js').logger;
 
+var prorigoRest = require('./prorigoRest');
+
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
@@ -13,37 +15,48 @@ var DialogLabels = {
 
 // This is a dinner reservation bot that uses a waterfall technique to prompt users for input.
 var bot = new builder.UniversalBot(connector, [
-    function (session) {
-        builder.Prompts.choice(
-            session,
-            'Please enter one of the choice',
-            [DialogLabels.book_room, DialogLabels.cancel_booking],
-            {
-                maxRetries: 3,
-                retryPrompt: 'Not a valid option'
-            });
-    },
-    function (session, result) {
-        if (!result.response) {
-            // exhausted attemps and no selection, start over
-            session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
-            return session.endDialog();
+    function(session){
+        var msg = session.message.text.toLowerCase();
+        if(msg == '' ||msg == 'hi'){
+            session.send('welcome_title');
+            session.send('welcome_info');
+            session.send('Just type away your requests or queries');
         }
-
-        // on error, start over
-        session.on('error', function (err) {
-            session.send('Failed with message: %s', err.message);
-            session.endDialog();
-        });
-
-        // continue on proper dialog
-        var selection = result.response.entity;
-        switch (selection) {
-            case DialogLabels.book_room:
-                return session.beginDialog('bookrooms');
-        }   
     }
 ]);
+
+var luisAppUrl = process.env.LUIS_MODEL_URL
+bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
+
+// bot.beginDialog('understandUtterance', [
+//     function(session){
+//         builder.Prompts.text(session, "Just type away your requests or queries");
+//     },
+//     function(session, results){
+
+//     }
+// ]);
+
+bot.dialog('ShowHolidays', [
+    function(session, args, next){
+        session.sendTyping();
+        var intent = args.intent;
+        var duration = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
+        logger.debug(duration);
+        prorigoRest.getAllHolidays().then(function(json){
+            json.forEach(function(holiday){
+                session.send(holiday.reason + " " + holiday.date);
+            });
+            session.endDialog();
+        }).catch(function(err){
+            logger.error(err);
+        });
+
+    }
+]).triggerAction({
+    matches:'ShowHolidays'
+});
+
 var room = require('./book-room');
 
 bot.dialog('bookrooms',room );
