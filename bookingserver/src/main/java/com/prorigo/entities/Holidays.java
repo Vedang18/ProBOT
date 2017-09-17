@@ -25,7 +25,7 @@ public class Holidays implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int uid;
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(pattern="dd-MM-yyyy", timezone="IST")
     private Date date;
     private String day;
     private String reason;
