@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,21 +29,31 @@ public class BookingController
     IBookingService bookingService;
 
     // FIXME Do proper coding, take meeting as json body or separate parameter &
-    // then make meeting object 
+    // then make meeting object
     @RequestMapping("/book/{channelId}")
-    public String bookRoom(@PathVariable String channelId, Meeting meeting)
+    public String bookRoom(@PathVariable String channelId, @RequestBody Meeting meeting)
     {
-	User user = userService.getUserByChannelId(channelId);
-	System.out.println("userName: " + user.getUsername());
-	System.out.println("password: " + user.getPassword());
-	bookingService.bookRoom(user, meeting);
-	return user.getUsername();
+        User user = userService.getUserByChannelId(channelId);
+        if (user == null)
+        {
+            return null;
+        }
+        bookingService.bookRoom(user, meeting);
+        return user.getUsername();
     }
-    
-	@RequestMapping("/show/{channelId}")
-	public List<String> showBookings(@PathVariable String channelId) {
-		User user = userService.getUserByChannelId(channelId);
-		System.out.println("userName: " + user.getUsername());
-		return bookingService.showMyBookings(user);
-	}
+
+    @RequestMapping("/show/{channelId}")
+    public List<String> showMyBookings(@PathVariable String channelId)
+    {
+        User user = userService.getUserByChannelId(channelId);
+        return bookingService.showMyBookings(user);
+    }
+
+    @RequestMapping("/show/all/{channelId}")
+    public List<String> showAllBookings(@PathVariable String channelId)
+    {
+        User user = userService.getUserByChannelId(channelId);
+        return bookingService.showMyBookings(user);
+    }
+
 }

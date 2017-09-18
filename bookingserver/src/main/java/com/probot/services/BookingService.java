@@ -14,26 +14,40 @@ import com.probot.helper.Bookie;
  *
  */
 @Service
-public class BookingService implements IBookingService {
+public class BookingService implements IBookingService
+{
 
-	@Autowired
-	Bookie bookie;
+    @Autowired
+    Bookie bookie;
 
-	public void bookRoom(User user, Meeting meeting) {
-		try {
-			bookie.roomBooking(user, meeting);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public void bookRoom(User user, Meeting meeting)
+    {
+        try
+        {
+            bookie.roomBooking(user, meeting);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	public List<String> showMyBookings(User user) {
-		List<String> myBookings = null;
-		try {
-			myBookings = bookie.showMyBookings(user);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return myBookings;
-	}
+    public List<String> showMyBookings(User user)
+    {
+        List<String> myBookings = null;
+        try
+        {
+            myBookings = bookie.showMyBookings(user);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return myBookings;
+    }
+
+    @Override
+    public List<String> showAllBookings(User user)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
