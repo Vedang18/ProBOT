@@ -21,6 +21,7 @@ var bot = new builder.UniversalBot(connector, [
             session.send('welcome_title');
             session.send('welcome_info');
             session.send('Just type away your requests or queries');
+            session.send(JSON.stringify(session.message.address));
         }
     }
 ]);
