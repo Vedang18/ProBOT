@@ -1,5 +1,7 @@
 package com.probot.controller;
 
+import java.util.List;
+
 import org.eclipse.jetty.util.annotation.ManagedAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.BootstrapWith;
@@ -39,4 +41,11 @@ public class BookingController
 	bookingService.bookRoom(user, meeting);
 	return user.getUsername();
     }
+    
+	@RequestMapping("/show/{channelId}")
+	public List<String> showBookings(@PathVariable String channelId) {
+		User user = userService.getUserByChannelId(channelId);
+		System.out.println("userName: " + user.getUsername());
+		return bookingService.showMyBookings(user);
+	}
 }

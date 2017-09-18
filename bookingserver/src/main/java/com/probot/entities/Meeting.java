@@ -7,76 +7,72 @@ import java.util.List;
  * @author Vedang, Created on Sep 17, 2017
  *
  */
-public class Meeting
-{
-    private String room;
-    private Date startTime;
-    private Date endTime;
-    private String reason;
-    private List<String> attendies;
+public class Meeting {
+	private String room;
+	private Date startTime;
+	private Date endTime;
+	private String reason;
+	private List<String> attendies;
+	private String meetingId;
 
+	public Meeting() {
 
-    public Meeting()
-    {
+	}
+
+	public Meeting(String room, Date startTime, Date endTime, String reason,
+			List<String> attendies) {
+		this.room = room;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.reason = reason;
+		this.attendies = attendies;
+	}
 	
-    }
+	public String getRoom() {
+		return room;
+	}
 
-    public Meeting(String room, Date startTime, Date endTime, String reason, List<String> attendies)
-    {
-	this.room = room;
-	this.startTime = startTime;
-	this.endTime = endTime;
-	this.reason = reason;
-	this.attendies = attendies;
-    }
+	public void setRoom(String room) {
+		this.room = room;
+	}
 
-    public String getRoom()
-    {
-	return room;
-    }
+	public Date getStartTime() {
+		return startTime;
+	}
 
-    public void setRoom(String room)
-    {
-	this.room = room;
-    }
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
 
-    public Date getStartTime()
-    {
-	return startTime;
-    }
+	public Date getEndTime() {
+		return endTime;
+	}
 
-    public void setStartTime(Date startTime)
-    {
-	this.startTime = startTime;
-    }
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 
-    public Date getEndTime()
-    {
-	return endTime;
-    }
+	public String getReason() {
+		return reason;
+	}
 
-    public void setEndTime(Date endTime)
-    {
-	this.endTime = endTime;
-    }
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 
-    public String getReason()
-    {
-	return reason;
-    }
+	public List<String> getAttendies() {
+		return attendies;
+	}
 
-    public void setReason(String reason)
-    {
-	this.reason = reason;
-    }
+	public void setAttendies(List<String> attendies) {
+		this.attendies = attendies;
+	}
 
-    public List<String> getAttendies()
-    {
-	return attendies;
-    }
+	public String getMeetingId() {
+		return meetingId;
+	}
 
-    public void setAttendies(List<String> attendies)
-    {
-	this.attendies = attendies;
-    }
+	public void setMeetingId(String meetingId) {
+		this.meetingId = meetingId;
+	}
 }

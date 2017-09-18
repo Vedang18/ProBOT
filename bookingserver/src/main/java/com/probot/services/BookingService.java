@@ -1,5 +1,7 @@
 package com.probot.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +14,26 @@ import com.probot.helper.Bookie;
  *
  */
 @Service
-public class BookingService implements IBookingService
-{
+public class BookingService implements IBookingService {
 
-    @Autowired
-    Bookie bookie;
+	@Autowired
+	Bookie bookie;
 
-    public void bookRoom(User user, Meeting meeting)
-    {
-	try
-	{
-	    bookie.roomBooking(user, meeting);
-	} catch (Exception e)
-	{
-	    e.printStackTrace();
+	public void bookRoom(User user, Meeting meeting) {
+		try {
+			bookie.roomBooking(user, meeting);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-    }
+
+	public List<String> showMyBookings(User user) {
+		List<String> myBookings = null;
+		try {
+			myBookings = bookie.showMyBookings(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return myBookings;
+	}
 }
