@@ -13,7 +13,6 @@ var DialogLabels = {
     cancel_booking: 'Cancel room booking',
 };
 
-// This is a dinner reservation bot that uses a waterfall technique to prompt users for input.
 var bot = new builder.UniversalBot(connector, [
     function(session){
         var msg = session.message.text.toLowerCase();
@@ -29,29 +28,39 @@ var bot = new builder.UniversalBot(connector, [
 var luisAppUrl = process.env.LUIS_MODEL_URL
 bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 
-// bot.beginDialog('understandUtterance', [
-//     function(session){
-//         builder.Prompts.text(session, "Just type away your requests or queries");
-//     },
-//     function(session, results){
-
-//     }
-// ]);
-
 bot.dialog('ShowHolidays', [
     function(session, args, next){
         session.sendTyping();
         var intent = args.intent;
         var duration = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
         logger.debug(duration);
-        prorigoRest.getAllHolidays().then(function(json){
-            var holidayMessage = createHolidayMessage(session, json);
-            session.send(holidayMessage);
-            session.endDialog();
-        }).catch(function(err){
-            logger.error(err);
-            session.endDialog('something_went_wrong');
-        });
+        if(duration == null){
+            prorigoRest.getAllHolidays(function(json){
+                var holidayMessage = createHolidayMessage(session, json);
+                session.send(holidayMessage);
+                session.endDialog();
+            }, function(err){
+                logger.error(err);
+                session.endDialog('something_went_wrong');
+            });
+        } else {
+            var actualDuration = duration.resolution.values[0];
+            var thisYear = new Date().getFullYear();
+            duration.resolution.values.forEach((val) =>{
+                if(val.start.startsWith(thisYear)){
+                    actualDuration = val;
+                }
+            })
+            prorigoRest.getHolidays(function(json){
+                var holidayMessage = createHolidayMessage(session, json);
+                session.send(holidayMessage);
+                session.endDialog();
+            },function(err){
+                logger.error(err);
+                session.endDialog('something_went_wrong');
+            }, {startDate : actualDuration.start, endDate: actualDuration.end});
+        }
+        
     }
 ]).triggerAction({
     matches:'ShowHolidays'
@@ -87,7 +96,6 @@ bot.use({
             // interrupt and trigger 'help' dialog
             //return session.beginDialog('help:/');
         }
-
         // continue normal flow
         next();
     }
@@ -137,9 +145,13 @@ function sendMessage(message) {
 
 function createHolidayMessage(session, holidayJson){
     var holidayMessageText = '';
-    holidayJson.forEach(function(holiday){
-        holidayMessageText += '* ' + holiday.reason + ' ' + holiday.date + '\n\n';
-    });
+    if(holidayJson.length == 0){
+        holidayMessageText = 'No holidays';
+    } else {
+        holidayJson.forEach(function(holiday){
+            holidayMessageText += '* ' + holiday.reason + ' on ' + holiday.date + '\n\n';
+        });
+    }
     var holidayMessage = new builder.Message(session);
     holidayMessage.text(holidayMessageText).textFormat('markdown');
     return holidayMessage;
