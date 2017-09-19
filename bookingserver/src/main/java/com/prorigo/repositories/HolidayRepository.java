@@ -18,8 +18,4 @@ public interface HolidayRepository extends CrudRepository<Holidays, Integer>
 {
     @Query("SELECT h FROM Holidays h WHERE date > :date")
     Iterable<Holidays> findHolidaysafter(@Param("date") Date date);
-
-    Iterable<Holidays> findAllByOrderByDate();
-
-    Iterable<Holidays> findByDateBetweenOrderByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
