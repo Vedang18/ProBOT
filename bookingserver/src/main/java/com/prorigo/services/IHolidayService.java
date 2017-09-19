@@ -12,6 +12,7 @@ import com.prorigo.entities.Holidays;
 public interface IHolidayService
 {
     List<Holidays> getHolidaysafter(Date date);
+    List<Holidays> getHolidaysBetween(Date startDate, Date endDate);
     List<Holidays> getAllHolidays();
     List<Holidays> getHolidaysInMonth(String month);
 }

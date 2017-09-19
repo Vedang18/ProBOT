@@ -5,10 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.prorigo.HolidayModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.prorigo.entities.Holidays;
 import com.prorigo.services.IHolidayService;
@@ -31,11 +30,17 @@ public class HolidayController
 	return holidayService.getAllHolidays();
     }
     
-    @RequestMapping("/after/{date}") 
+    @RequestMapping("/after/{date}")
     public List<Holidays> getHolidaysAfter(@PathVariable String date) throws ParseException
     {
-	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	Date actualDate = sdf.parse(date);
-	return holidayService.getHolidaysafter(actualDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Date actualDate = sdf.parse(date);
+        return holidayService.getHolidaysafter(actualDate);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public List<Holidays> getHolidaysBetween(@RequestBody HolidayModel model) throws ParseException
+    {
+        return holidayService.getHolidaysBetween(model.getStartDate(), model.getEndDate());
     }
 }
