@@ -4,5 +4,6 @@
     "welcome_subtitle": "How can I help?",
     "welcome_sorry": "I am sorry, I couldn't understand you. Send Hi!",
     "help": "Help",
-    "thank_you": "Have a nice day!"
+    "thank_you": "Have a nice day!",
+    "something_went_wrong": "Something went wrong while contacting server. We are sorry for the inconvinience."
 }

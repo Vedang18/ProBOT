@@ -45,14 +45,13 @@ bot.dialog('ShowHolidays', [
         var duration = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
         logger.debug(duration);
         prorigoRest.getAllHolidays().then(function(json){
-            json.forEach(function(holiday){
-                session.send(holiday.reason + " " + holiday.date);
-            });
+            var holidayMessage = createHolidayMessage(session, json);
+            session.send(holidayMessage);
             session.endDialog();
         }).catch(function(err){
             logger.error(err);
+            session.endDialog('something_went_wrong');
         });
-
     }
 ]).triggerAction({
     matches:'ShowHolidays'
@@ -134,6 +133,16 @@ function beginDialog(address, dialogId, dialogArgs) {
 
 function sendMessage(message) {
     bot.send(message);
+}
+
+function createHolidayMessage(session, holidayJson){
+    var holidayMessageText = '';
+    holidayJson.forEach(function(holiday){
+        holidayMessageText += '* ' + holiday.reason + ' ' + holiday.date + '\n\n';
+    });
+    var holidayMessage = new builder.Message(session);
+    holidayMessage.text(holidayMessageText).textFormat('markdown');
+    return holidayMessage;
 }
 
 module.exports = {
