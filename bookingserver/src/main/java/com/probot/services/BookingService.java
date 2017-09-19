@@ -31,9 +31,9 @@ public class BookingService implements IBookingService
         }
     }
 
-    public List<String> showMyBookings(User user)
+    public List<Meeting> showMyBookings(User user)
     {
-        List<String> myBookings = null;
+        List<Meeting> myBookings = null;
         try
         {
             myBookings = bookie.showMyBookings(user);
@@ -45,9 +45,26 @@ public class BookingService implements IBookingService
     }
 
     @Override
-    public List<String> showAllBookings(User user)
+    public List<Meeting> showAllBookings(User user)
     {
-        // TODO Auto-generated method stub
-        return null;
+    	List<Meeting> allBookings = null;
+        try
+        {
+            allBookings = bookie.showAllBookings(user);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return allBookings;
     }
+
+	@Override
+	public void cancelRoomBooking(User user,Meeting meeting) {
+		try {
+			bookie.cancelBooking(user,meeting);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }

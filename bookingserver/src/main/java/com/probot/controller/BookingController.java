@@ -43,17 +43,29 @@ public class BookingController
     }
 
     @RequestMapping("/show/{channelId}")
-    public List<String> showMyBookings(@PathVariable String channelId)
+    public List<Meeting> showMyBookings(@PathVariable String channelId)
     {
         User user = userService.getUserByChannelId(channelId);
         return bookingService.showMyBookings(user);
     }
 
     @RequestMapping("/show/all/{channelId}")
-    public List<String> showAllBookings(@PathVariable String channelId)
+    public List<Meeting> showAllBookings(@PathVariable String channelId)
     {
         User user = userService.getUserByChannelId(channelId);
-        return bookingService.showMyBookings(user);
+        return bookingService.showAllBookings(user);
+    }
+    
+    @RequestMapping("/cancel/{channelId}")
+    public String cancelRoomBooking(@PathVariable String channelId,@RequestBody Meeting meeting)
+    {
+        User user = userService.getUserByChannelId(channelId);
+        if (user == null)
+        {
+            return null;
+        }
+        bookingService.cancelRoomBooking(user,meeting);
+        return user.getUsername();
     }
 
 }
