@@ -7,10 +7,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.probot.entities.Holidays;
+import com.probot.models.HolidayModel;
 import com.probot.services.IHolidayService;
 
 /**
@@ -25,18 +28,25 @@ public class HolidayController
     @Autowired
     IHolidayService holidayService;
 
-    @RequestMapping("/all") 
+    @RequestMapping("/all")
     public List<Holidays> getAllHolidays()
     {
-	List<Holidays> allHolidays = holidayService.getAllHolidays();
-	return allHolidays;
+        List<Holidays> allHolidays = holidayService.getAllHolidays();
+        return allHolidays;
     }
-    
-    @RequestMapping("/after/{date}") 
+
+    @RequestMapping("/after/{date}")
     public List<Holidays> getHolidaysAfter(@PathVariable String date) throws ParseException
     {
-	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	Date actualDate = sdf.parse(date);
-	return holidayService.getHolidaysafter(actualDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Date actualDate = sdf.parse(date);
+        return holidayService.getHolidaysafter(actualDate);
     }
+
+    @RequestMapping(value = "/in", method = RequestMethod.POST)
+    public List<Holidays> getHolidaysAfter(@RequestBody HolidayModel holidayModel) throws ParseException
+    {
+        return holidayService.getHolidaysInBetween(holidayModel.getStartDate(), holidayModel.getEndDate());
+    }
+
 }

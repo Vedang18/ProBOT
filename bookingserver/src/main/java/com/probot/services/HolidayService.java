@@ -24,26 +24,33 @@ public class HolidayService implements IHolidayService
     @Override
     public List<Holidays> getHolidaysafter(Date date)
     {
-	List<Holidays> holidays = new ArrayList<>();
-	holidayRepository.findHolidaysafter(date).forEach(e -> holidays.add(e));
-	return holidays;
+        List<Holidays> holidays = new ArrayList<>();
+        holidayRepository.findHolidaysafter(date).forEach(e -> holidays.add(e));
+        return holidays;
     }
 
     @Override
     public List<Holidays> getAllHolidays()
     {
-	List<Holidays> holidays = new ArrayList<>();
-	holidayRepository.findAll().forEach(e -> holidays.add(e));
-	return holidays;
+        List<Holidays> holidays = new ArrayList<>();
+        holidayRepository.findAllByOrderByDateAsc().forEach(e -> holidays.add(e));
+        return holidays;
     }
 
     @Override
     public List<Holidays> getHolidaysInMonth(String month)
     {
-	//FIXME ugly code
-	int m = Month.valueOf(month).getValue();
-	List<Holidays> holidays = getAllHolidays();
-	return holidays.subList(m / 2, (holidays.size() - 1));
+        // FIXME ugly code
+        int m = Month.valueOf(month).getValue();
+        List<Holidays> holidays = getAllHolidays();
+        return holidays.subList(m / 2, (holidays.size() - 1));
     }
 
+    @Override
+    public List<Holidays> getHolidaysInBetween(Date startDate, Date endDate)
+    {
+        List<Holidays> holidays = new ArrayList<>();
+        holidayRepository.findByDateBetweenOrderByDate(startDate,endDate).forEach(e -> holidays.add(e));
+        return holidays;
+    }
 }
