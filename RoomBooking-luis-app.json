@@ -1,0 +1,479 @@
+{
+  "luis_schema_version": "2.1.0",
+  "versionId": "0.1",
+  "name": "RoomBooking",
+  "desc": "",
+  "culture": "en-us",
+  "intents": [
+    {
+      "name": "BookRoom"
+    },
+    {
+      "name": "CancelRoom"
+    },
+    {
+      "name": "Greetings"
+    },
+    {
+      "name": "help"
+    },
+    {
+      "name": "None"
+    },
+    {
+      "name": "ShowBookingStatus"
+    },
+    {
+      "name": "ShowHolidays"
+    }
+  ],
+  "entities": [
+    {
+      "name": "purpose"
+    }
+  ],
+  "composites": [],
+  "closedLists": [
+    {
+      "name": "room",
+      "subLists": [
+        {
+          "canonicalForm": "cr1",
+          "list": [
+            "conference1",
+            "conference 1",
+            "conf1",
+            "conf 1",
+            "cr1",
+            "cr-1",
+            "conference room 1",
+            "conference-room1",
+            "conference room-1",
+            "conf-1",
+            "conf room 1",
+            "conf room-1",
+            "conf-room-1",
+            "conf-room1",
+            "conference-room-1"
+          ]
+        },
+        {
+          "canonicalForm": "cr2",
+          "list": [
+            "conference2",
+            "conference 2",
+            "conf2",
+            "conf 2",
+            "cr2",
+            "cr-2",
+            "conference room 2",
+            "conference-room2",
+            "conference room-2",
+            "conf-2",
+            "conf room 2",
+            "conf room-2",
+            "conf-room-2",
+            "conf-room2",
+            "conference-room-2"
+          ]
+        },
+        {
+          "canonicalForm": "cr3",
+          "list": [
+            "conference room 3",
+            "conference-room-3",
+            "conference3",
+            "conference 3",
+            "conf3",
+            "conf 3",
+            "cr3",
+            "cr-3",
+            "conference-room3",
+            "conference room-3",
+            "conf-3",
+            "conf room 3",
+            "conf room-3",
+            "conf-room-3",
+            "conf-room3"
+          ]
+        },
+        {
+          "canonicalForm": "cr4",
+          "list": [
+            "conference room 4",
+            "conference-room-4",
+            "conference4",
+            "conference 4",
+            "conf4",
+            "conf 4",
+            "cr4",
+            "cr-4",
+            "conference-room4",
+            "conference room-4",
+            "conf-4",
+            "conf room 4",
+            "conf room-4",
+            "conf-room-4",
+            "conf-room4"
+          ]
+        },
+        {
+          "canonicalForm": "mr1",
+          "list": [
+            "meeting room 1",
+            "MR-1",
+            "mr1",
+            "meeting-room-1",
+            "meeting room-1",
+            "meeting-room 1",
+            "meeting room1"
+          ]
+        },
+        {
+          "canonicalForm": "mr2",
+          "list": [
+            "meeting room 2",
+            "meeting-room-2",
+            "meeting room-2",
+            "MR-2",
+            "mr2",
+            "meeting-room 2",
+            "meeting room2"
+          ]
+        },
+        {
+          "canonicalForm": "mr3",
+          "list": [
+            "meeting room 3",
+            "meeting-room 3",
+            "meeting-room-3",
+            "meeting room-3",
+            "mr-3",
+            "mr3",
+            "meeting room3"
+          ]
+        },
+        {
+          "canonicalForm": "cr-bcn",
+          "list": [
+            "communication room(bcn area)"
+          ]
+        }
+      ]
+    }
+  ],
+  "bing_entities": [
+    "datetimeV2"
+  ],
+  "actions": [],
+  "model_features": [
+    {
+      "name": "Names",
+      "mode": true,
+      "words": "suzanne,komal,vedang,abhishek",
+      "activated": true
+    }
+  ],
+  "regex_features": [],
+  "utterances": [
+    {
+      "text": "hello",
+      "intent": "Greetings",
+      "entities": []
+    },
+    {
+      "text": "hi",
+      "intent": "Greetings",
+      "entities": []
+    },
+    {
+      "text": "good morning",
+      "intent": "Greetings",
+      "entities": []
+    },
+    {
+      "text": "can you help me?",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "i need help",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "gm",
+      "intent": "Greetings",
+      "entities": []
+    },
+    {
+      "text": "can you book conf-4?",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "cancel booking of conference room 1",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "cancel booking of conf room 1",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "show reserved books",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "show books that are reserved",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "show booked rooms",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "show the rooms that are booked",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "show me holidays for this month",
+      "intent": "ShowHolidays",
+      "entities": []
+    },
+    {
+      "text": "show me the holidays for this year",
+      "intent": "ShowHolidays",
+      "entities": []
+    },
+    {
+      "text": "i want to reserve conf room 1",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "can you book room conference room 1",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book room cr-1",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book room conf-1 tomorrow",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book room conf-2 today at 3",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "reserve mr-1 at 5 today",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "show status of conf1",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "show rooms that are reserved",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "book room conf 1 with vedang at 4 today",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book room cr1 with suzanne",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book conf1 at 4 for 2 hours",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "reserve conf1 tomorrow from 4 to 5",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book conf 1 from 4:00 for 30 min",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book conf 1 from 4:00 to 5:00",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "i want to book room conf1 for meeting",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 30,
+          "endPos": 36
+        }
+      ]
+    },
+    {
+      "text": "i want to book conf1 for meeting",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 25,
+          "endPos": 31
+        }
+      ]
+    },
+    {
+      "text": "i want to reserve conf2 for demonstration",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 28,
+          "endPos": 40
+        }
+      ]
+    },
+    {
+      "text": "reserve room for discussion",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 17,
+          "endPos": 26
+        }
+      ]
+    },
+    {
+      "text": "reserve conf1 for quarterly party discussion",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 18,
+          "endPos": 43
+        }
+      ]
+    },
+    {
+      "text": "can you book conf1 for cultural committee discussion?",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 23,
+          "endPos": 51
+        }
+      ]
+    },
+    {
+      "text": "reserve conf1 for scrum meeting",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 18,
+          "endPos": 30
+        }
+      ]
+    },
+    {
+      "text": "i want to book conf1 for cc discussion",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 25,
+          "endPos": 37
+        }
+      ]
+    },
+    {
+      "text": "book conf1 for h1_2017_18 discussion",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 15,
+          "endPos": 35
+        }
+      ]
+    },
+    {
+      "text": "reserve conf1 for python training",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 18,
+          "endPos": 32
+        }
+      ]
+    },
+    {
+      "text": "book conf1 for blueprint session",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 15,
+          "endPos": 31
+        }
+      ]
+    },
+    {
+      "text": "book conf1 for bluecat/migration mock demo",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 15,
+          "endPos": 41
+        }
+      ]
+    },
+    {
+      "text": "book conf1 for sprint planning sprint25",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 15,
+          "endPos": 38
+        }
+      ]
+    },
+    {
+      "text": "book conf1 for tkt-123 findings and scope discussion",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 15,
+          "endPos": 51
+        }
+      ]
+    }
+  ]
+}
