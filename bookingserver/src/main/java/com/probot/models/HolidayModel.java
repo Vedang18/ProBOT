@@ -1,9 +1,8 @@
 package com.probot.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * Created by abhisheks on 19-Sep-17.

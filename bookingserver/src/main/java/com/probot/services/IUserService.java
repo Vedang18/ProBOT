@@ -10,5 +10,6 @@ public interface IUserService
 {
 
     User getUserByChannelId(String channelId);
-    void save(String channelId, String username, String password);
+    User save(String channelId, String userId, String username, String password);
+    User save(User user);
 }

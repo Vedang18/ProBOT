@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.probot.entities.Meeting;
@@ -30,10 +31,10 @@ public class BookingController
 
     // FIXME Do proper coding, take meeting as json body or separate parameter &
     // then make meeting object
-    @RequestMapping("/book/{channelId}")
-    public String bookRoom(@PathVariable String channelId, @RequestBody Meeting meeting)
+    @RequestMapping(value = "/book", method = RequestMethod.POST)
+    public String bookRoom(@RequestBody User fetchUser, @RequestBody Meeting meeting)
     {
-        User user = userService.getUserByChannelId(channelId);
+        User user = userService.getUserByChannelId(fetchUser.getUserId());
         if (user == null)
         {
             return null;
@@ -42,29 +43,29 @@ public class BookingController
         return user.getUsername();
     }
 
-    @RequestMapping("/show/{channelId}")
-    public List<Meeting> showMyBookings(@PathVariable String channelId)
+    @RequestMapping(value = "/show", method = RequestMethod.POST)
+    public List<Meeting> showMyBookings(@RequestBody User fetchUser)
     {
-        User user = userService.getUserByChannelId(channelId);
+        User user = userService.getUserByChannelId(fetchUser.getUserId());
         return bookingService.showMyBookings(user);
     }
 
-    @RequestMapping("/show/all/{channelId}")
-    public List<Meeting> showAllBookings(@PathVariable String channelId)
+    @RequestMapping(value = "/showAll", method = RequestMethod.POST)
+    public List<Meeting> showAllBookings(@RequestBody User fetchUser)
     {
-        User user = userService.getUserByChannelId(channelId);
+        User user = userService.getUserByChannelId(fetchUser.getUserId());
         return bookingService.showAllBookings(user);
     }
-    
-    @RequestMapping("/cancel/{channelId}")
-    public String cancelRoomBooking(@PathVariable String channelId,@RequestBody Meeting meeting)
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancelRoomBooking(@RequestBody User fetchUser, @RequestBody Meeting meeting)
     {
-        User user = userService.getUserByChannelId(channelId);
+        User user = userService.getUserByChannelId(fetchUser.getUserId());
         if (user == null)
         {
             return null;
         }
-        bookingService.cancelRoomBooking(user,meeting);
+        bookingService.cancelRoomBooking(user, meeting);
         return user.getUsername();
     }
 

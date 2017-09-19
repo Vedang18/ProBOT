@@ -24,23 +24,31 @@ public class UserService implements IUserService
     @Override
     public User getUserByChannelId(String channelId)
     {
-	return userRepository.findByChannelId(channelId);
+        return userRepository.findByChannelId(channelId);
     }
 
     @Override
-    public void save(String channelId, String username, String password)
+    public User save(String channelId, String userId, String username, String password)
     {
-	try
-	{
-	    User user = new User();
-	    user.setChannelId(channelId);
-	    user.setUsername(username);
-	    user.setPassword(passwordCoder.encrypt(password));
-	    userRepository.save(user);
-	} catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+        try
+        {
+            User user = new User();
+            user.setChannelId(channelId);
+            user.setUserId(userId);
+            user.setUsername(username);
+            user.setPassword(passwordCoder.encrypt(password));
+            return userRepository.save(user);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public User save(User user)
+    {
+        return save(user.getChannelId(), user.getUserId(), user.getUsername(), user.getPassword());
     }
 
 }
