@@ -35,7 +35,22 @@ function getHolidays(callback, errCallback, body){
     })
 }
 
+function getAllBookings(callback, errCallback){
+    fetch(prorigoRestEndpoint + '/api/room/show/all/3')
+    .then(function(response) {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server");
+        }
+        return response.json();
+    }).then(function(jsonResponse){
+        callback(jsonResponse);
+    }).catch(function(err){
+        errCallback(err);
+    });;
+}
+
 module.exports = {
     getAllHolidays: getAllHolidays,
-    getHolidays: getHolidays
+    getHolidays: getHolidays,
+    getAllBookings: getAllBookings
 }
