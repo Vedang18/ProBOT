@@ -1,9 +1,9 @@
-package com.prorigo.services;
+package com.probot.services;
 
 import java.util.Date;
 import java.util.List;
 
-import com.prorigo.entities.Holidays;
+import com.probot.entities.Holidays;
 
 /**
  * @author Vedang, Created on Sep 17, 2017

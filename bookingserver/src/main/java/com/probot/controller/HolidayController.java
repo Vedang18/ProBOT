@@ -1,4 +1,4 @@
-package com.prorigo.controller;
+package com.probot.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.prorigo.entities.Holidays;
-import com.prorigo.services.IHolidayService;
+import com.probot.entities.Holidays;
+import com.probot.services.IHolidayService;
 
 /**
  * @author Vedang, Created on Sep 17, 2017

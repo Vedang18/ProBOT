@@ -1,4 +1,4 @@
-package com.prorigo.entities;
+package com.probot.entities;
 
 import java.io.Serializable;
 import java.util.Date;

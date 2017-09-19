@@ -1,4 +1,4 @@
-package com.prorigo.repositories;
+package com.probot.repositories;
 
 import java.util.Date;
 
@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.prorigo.entities.Holidays;
+import com.probot.entities.Holidays;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
