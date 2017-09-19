@@ -3,6 +3,8 @@ package com.probot.entities;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * @author Vedang, Created on Sep 17, 2017
  *
@@ -10,8 +12,9 @@ import java.util.List;
 public class Meeting
 {
     private String room;
+    @JsonFormat(pattern="dd-MM-yyyy", timezone="IST")
     private Date date;
-    private String fromTime;
+	private String fromTime;
     private String toTime;
     private String reason;
     private List<String> attendees;
@@ -22,7 +25,8 @@ public class Meeting
 
     }
 
-    public String getRoom()
+
+	public String getRoom()
     {
         return room;
     }
@@ -91,4 +95,10 @@ public class Meeting
     {
         this.meetingId = meetingId;
     }
+    
+    @Override
+	public String toString() {
+		return "Meeting in " + room + " on " + date + " from " + fromTime + " to" + toTime
+				+ " for " + reason + " with " + attendees;
+	}
 }
