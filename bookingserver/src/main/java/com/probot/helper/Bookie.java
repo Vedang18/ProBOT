@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.collect.Iterables;
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
@@ -67,6 +68,10 @@ public class Bookie
 			HtmlSelect select = (HtmlSelect)page.getElementById( "ConferenceRooms" );
 			HtmlOption option = select.getOptionByValue( meeting.getRoom() );
 			select.setSelectedAttribute( option, true );
+			
+			HtmlTextInput startDate = form.getFirstByXPath(".//*[@id='StartDate']");
+			DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+			startDate.setAttribute("value",formatter.format(meeting.getDate()));
 
 			HtmlInput inputStartTime = form.getInputByName( "StartTime" );
 			inputStartTime.setValueAttribute( meeting.getFromTime() );
