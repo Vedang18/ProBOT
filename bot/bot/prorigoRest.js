@@ -49,8 +49,12 @@ function getHolidays(callback, errCallback, body){
     })
 }
 
-function getAllBookings(callback, errCallback){
-    fetch(prorigoRestEndpoint + '/api/room/show/all/3')
+function getAllBookings(callback, errCallback,json){
+	var headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    };
+    fetch(prorigoRestEndpoint + '/api/room/showAll',  {method: 'POST', body: JSON.stringify(json), headers: headers})
     .then(function(response) {
         if (response.status >= 400) {
             throw new Error("Bad response from server");

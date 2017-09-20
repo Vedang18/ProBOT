@@ -13,7 +13,7 @@ lib.dialog('/ShowBookingStatus',[function(session,args,next){
     }, function(err){
         logger.error(err);
         session.endDialog('something_went_wrong');
-    });
+    },{userId : 'test', channelId: 'skype'});
 }]).triggerAction({
     matches: 'ShowBookingStatus'
 });
@@ -25,7 +25,7 @@ function createBookingMessage(session, bookingJson){
     } else {
         bookingJson.forEach(function(booking){
             bookingMessageText += '* Meeting in ' + booking.room + ' on ' + booking.date +' from ' 
-            + booking.fromTime + ' to ' + booking.toTime + ' for ' + reason + ' with ' + attendees + '\n\n';
+            + booking.fromTime + ' to ' + booking.toTime + ' for ' + booking.reason + ' with ' + booking.attendees + '\n\n';
         });
     }
     
