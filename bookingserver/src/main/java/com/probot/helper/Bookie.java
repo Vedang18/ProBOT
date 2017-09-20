@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -53,6 +55,8 @@ public class Bookie
 	public void roomBooking( User user, Meeting meeting ) throws Exception
 	{
 
+		List<String> errorMessages = new ArrayList<String>();
+		
 		try ( final WebClient webClient = new WebClient( BrowserVersion.FIREFOX_52 ) )
 		{
 			webClient.getOptions().setCssEnabled( false );
@@ -83,6 +87,14 @@ public class Bookie
 			inputReason.type( meeting.getReason() );
 
 			button.click();
+			
+			//TODO : Handle exceptions
+			DomNodeList<DomElement> list = page.getElementsByTagName("span");
+			for (DomElement domElement : list) {
+				if (domElement.getAttribute("class").contains("field-validation-error")) {
+					errorMessages.add(domElement.getTextContent());
+				}
+			}
 		}
 	}
 
