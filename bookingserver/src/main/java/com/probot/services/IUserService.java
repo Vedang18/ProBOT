@@ -9,7 +9,7 @@ import com.probot.entities.User;
 public interface IUserService
 {
 
-    User getUserByChannelId(String channelId);
+    User getUserByChannelAndUserId(User user);
     User save(String channelId, String userId, String username, String password);
     User save(User user);
 }

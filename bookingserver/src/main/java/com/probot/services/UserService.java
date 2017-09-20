@@ -22,9 +22,9 @@ public class UserService implements IUserService
     UserRepository userRepository;
 
     @Override
-    public User getUserByChannelId(String channelId)
+    public User getUserByChannelAndUserId(User user)
     {
-        return userRepository.findByChannelId(channelId);
+		return userRepository.findByChannelIdAndUserId( user.getChannelId(), user.getUserId() );
     }
 
     @Override

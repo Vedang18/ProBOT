@@ -33,151 +33,159 @@ import com.probot.entities.User;
  *
  */
 @Component
-public class Bookie {
+public class Bookie
+{
 
 	private static final String WEBSITE = "apps.prorigo.com";
+
 	private static final String BOOKING = "/conference/Booking";
+
 	private static final String SHOW_MY_BOOKINGS = "/conference/Home/MyBooking";
+
 	private static final String SHOW_ALL_BOOKINGS = "/conference/Home/AllBooking";
+
 	private static final String CANCEL_BOOKING = "/conference/Booking/Edit";
 
 	@Autowired
 	PasswordCoder passwordCoder;
 
-	public void roomBooking(User user, Meeting meeting) throws Exception {
+	public void roomBooking( User user, Meeting meeting ) throws Exception
+	{
 
-		try (final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_52)) {
+		try ( final WebClient webClient = new WebClient( BrowserVersion.FIREFOX_52 ) )
+		{
+			webClient.getOptions().setCssEnabled( false );
+			webClient.getOptions().setJavaScriptEnabled( false );
+			addCredentials( user, webClient );
 
-			// set proxy username and password
-			addCredentials(user, webClient);
+			String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( BOOKING ).toString();
+			HtmlPage page = webClient.getPage( pageUrl );
 
-			String pageUrl = new StringBuilder("http://").append(WEBSITE).append(BOOKING).toString();
-			HtmlPage page = webClient.getPage(pageUrl);
+			HtmlForm form = page.getForms().get( 0 );
+			HtmlButton button = form.getFirstByXPath( "//*[@id=\"Submit\"]" );
 
-			HtmlForm form = page.getForms().get(0);
-			HtmlButton button = form.getFirstByXPath("//*[@id=\"Submit\"]");
+			HtmlSelect select = (HtmlSelect)page.getElementById( "ConferenceRooms" );
+			HtmlOption option = select.getOptionByValue( meeting.getRoom() );
+			select.setSelectedAttribute( option, true );
 
-			HtmlSelect select = (HtmlSelect) page.getElementById("ConferenceRooms");
-			HtmlOption option = select.getOptionByValue(meeting.getRoom());
-			select.setSelectedAttribute(option, true);
+			HtmlInput inputStartTime = form.getInputByName( "StartTime" );
+			inputStartTime.setValueAttribute( meeting.getFromTime() );
 
-			HtmlInput inputStartTime = form.getInputByName("StartTime");
-			inputStartTime.setValueAttribute(meeting.getFromTime());
+			HtmlInput inputEndTime = form.getInputByName( "EndTime" );
+			inputEndTime.setValueAttribute( meeting.getToTime() );
 
-			HtmlInput inputEndTime = form.getInputByName("EndTime");
-			inputEndTime.setValueAttribute(meeting.getToTime());
-
-			HtmlInput inputReason = form.getInputByName("Title");
-			inputReason.type("Test Booking By HtmlUnit");
+			HtmlInput inputReason = form.getInputByName( "Title" );
+			inputReason.type( meeting.getReason() );
 
 			button.click();
 		}
 	}
 
-	private void addCredentials(User user, final WebClient webClient) throws Exception {
-		DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider) webClient
-				.getCredentialsProvider();
-		credentialsProvider.addNTLMCredentials(user.getUsername(), passwordCoder.decrypt(user.getPassword()), WEBSITE,
-				80, "", "");
+	private void addCredentials( User user, final WebClient webClient ) throws Exception
+	{
+		DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider)webClient
+			.getCredentialsProvider();
+		credentialsProvider.addNTLMCredentials(	user.getUsername(), passwordCoder.decrypt( user.getPassword() ), WEBSITE,
+												80, "", "" );
 	}
 
-	public List<Meeting> showMyBookings(User user) throws Exception {
-		return getBooking(user, SHOW_MY_BOOKINGS);
+	public List< Meeting > showMyBookings( User user ) throws Exception
+	{
+		return getBooking( user, SHOW_MY_BOOKINGS );
 	}
 
-	public List<Meeting> showAllBookings(User user) throws Exception {
-		return getBooking(user, SHOW_ALL_BOOKINGS);
+	public List< Meeting > showAllBookings( User user ) throws Exception
+	{
+		return getBooking( user, SHOW_ALL_BOOKINGS );
 	}
 
-	private List<Meeting> getBooking(User user, String uri) throws Exception {
+	private List< Meeting > getBooking( User user, String uri ) throws Exception
+	{
 		final WebClient webClient = new WebClient();
-		webClient.getOptions().setCssEnabled(false);
-		webClient.getOptions().setJavaScriptEnabled(false);
-		addCredentials(user, webClient);
-		List<Meeting> bookings = new ArrayList<Meeting>();
+		webClient.getOptions().setCssEnabled( false );
+		webClient.getOptions().setJavaScriptEnabled( false );
+		addCredentials( user, webClient );
+		List< Meeting > bookings = new ArrayList< Meeting >();
 
-		String pageUrl = new StringBuilder("http://").append(WEBSITE).append(uri).toString();
-		HtmlPage page = webClient.getPage(pageUrl);
+		String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( uri ).toString();
+		HtmlPage page = webClient.getPage( pageUrl );
 
-		HtmlTable table = (HtmlTable) page.getByXPath(".//*[@id='Grid']/table").get(0);
-		List<HtmlTableRow> rows = table.getRows();
+		HtmlTable table = (HtmlTable)page.getByXPath( ".//*[@id='Grid']/table" ).get( 0 );
+		List< HtmlTableRow > rows = table.getRows();
 
-		// TODO : Refactor the code
-		for (HtmlTableRow htmlTableRow : Iterables.skip(rows, 1)) {
+		for( HtmlTableRow htmlTableRow : Iterables.skip( rows, 1 ) )
+		{
 			Meeting meeting = new Meeting();
 
 			String asText = htmlTableRow.asText();
-			String[] split = asText.split("\t");
-			meeting.setRoom(split[0].trim());
+			String[] split = asText.split( "\t" );
+			meeting.setRoom( split[0].trim() );
 			String bookingDate = split[1].trim();
-			DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-			meeting.setDate(format.parse(bookingDate));
+			DateFormat format = new SimpleDateFormat( "MM/dd/yyyy", Locale.ENGLISH );
+			meeting.setDate( format.parse( bookingDate ) );
 			String bookingTime = split[2].trim();
-			String[] timeArray = bookingTime.split("-");
-			meeting.setFromTime(timeArray[0].trim());
-			meeting.setToTime(timeArray[1].trim());
-			meeting.setReason(split[3].trim());
-			if (uri.equals(SHOW_ALL_BOOKINGS)) {
-				meeting.setAttendees(Arrays.asList(split[4].trim()));
-			} else {
-				String meetingId = getMeetingId(htmlTableRow);
-				meeting.setMeetingId(meetingId);
+			String[] timeArray = bookingTime.split( "-" );
+			meeting.setFromTime( timeArray[0].trim() );
+			meeting.setToTime( timeArray[1].trim() );
+			meeting.setReason( split[3].trim() );
+			if( uri.equals( SHOW_ALL_BOOKINGS ) )
+			{
+				meeting.setAttendees( Arrays.asList( split[4].trim() ) );
 			}
-			bookings.add(meeting);
+			else
+			{
+				String meetingId = getMeetingId( htmlTableRow );
+				meeting.setMeetingId( meetingId );
+			}
+			bookings.add( meeting );
 		}
-		System.out.println(bookings);
 		return bookings;
 	}
 
-	private String getMeetingId(HtmlTableRow htmlTableRow) throws URISyntaxException {
+	private String getMeetingId( HtmlTableRow htmlTableRow ) throws URISyntaxException
+	{
 		String meetingId = null;
-		for (HtmlTableCell cell : htmlTableRow.getCells()) {
-			if (cell.getElementsByTagName("a").getLength() != 0) {
-				String url = cell.getElementsByTagName("a").get(0).getAttribute("href").toString();
-				meetingId = getMeetingUniqueId(url);
+		for( HtmlTableCell cell : htmlTableRow.getCells() )
+		{
+			if( cell.getElementsByTagName( "a" ).getLength() != 0 )
+			{
+				String url = cell.getElementsByTagName( "a" ).get( 0 ).getAttribute( "href" ).toString();
+				meetingId = getMeetingUniqueId( url );
 			}
 		}
 		return meetingId;
 	}
 
-	public void cancelBooking(User user, Meeting meeting) throws Exception {
-		try (final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_52)) {
+	public void cancelBooking( User user, Meeting meeting ) throws Exception
+	{
+		try ( final WebClient webClient = new WebClient() )
+		{
 
-			// set proxy username and password
-			addCredentials(user, webClient);
-			String pageUrl = new StringBuilder("http://").append(WEBSITE).append(CANCEL_BOOKING).toString() + "/"
-					+ meeting.getMeetingId();
-			HtmlPage page = webClient.getPage(pageUrl);
+			addCredentials( user, webClient );
+			String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( CANCEL_BOOKING ).toString() + "/" + meeting.getMeetingId();
+			HtmlPage page = webClient.getPage( pageUrl );
 
-			HtmlForm form = page.getForms().get(0);
-			HtmlButton button = form.getFirstByXPath(".//*[@id='CancelBooking']");
+			HtmlForm form = page.getForms().get( 0 );
+			HtmlButton button = form.getFirstByXPath( ".//*[@id='CancelBooking']" );
 
 			button.click();
-			Thread.sleep(1000);
+			Thread.sleep( 1000 );
 
 			// TODO : Need to be enhanced
-			HtmlButton confirmButton = (HtmlButton) page.getByXPath("html/body/div[4]/div[3]/div/button[1]").get(0);
+			HtmlButton confirmButton = (HtmlButton)page.getByXPath( "html/body/div[4]/div[3]/div/button[1]" ).get( 0 );
 			confirmButton.click();
 
-			System.out.println("Booking cancelled");
+			System.out.println( "Booking cancelled" );
 		}
 
 	}
 
-	private String getMeetingUniqueId(String url) throws URISyntaxException {
-		URI uri = new URI(url);
-		String[] segments = uri.getPath().split("/");
+	private String getMeetingUniqueId( String url ) throws URISyntaxException
+	{
+		URI uri = new URI( url );
+		String[] segments = uri.getPath().split( "/" );
 		String idStr = segments[segments.length - 1];
 		return idStr;
 	}
 
-	public static void main(String[] args) {
-		Bookie bookie = new Bookie();
-		try {
-			bookie.showAllBookings(null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

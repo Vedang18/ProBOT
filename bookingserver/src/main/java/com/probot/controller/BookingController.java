@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
+import com.probot.models.BookingModel;
 import com.probot.services.IBookingService;
 import com.probot.services.IUserService;
 
@@ -29,12 +30,12 @@ public class BookingController
     @Autowired
     IBookingService bookingService;
 
-    // FIXME Do proper coding, take meeting as json body or separate parameter &
-    // then make meeting object
     @RequestMapping(value = "/book", method = RequestMethod.POST)
-    public String bookRoom(@RequestBody User fetchUser, @RequestBody Meeting meeting)
+    public String bookRoom(@RequestBody BookingModel model)
     {
-        User user = userService.getUserByChannelId(fetchUser.getUserId());
+    	User fetchUser = model.getUser();
+    	Meeting meeting = model.getMeeting();
+        User user = userService.getUserByChannelAndUserId( fetchUser );
         if (user == null)
         {
             return null;
@@ -46,21 +47,23 @@ public class BookingController
     @RequestMapping(value = "/show", method = RequestMethod.POST)
     public List<Meeting> showMyBookings(@RequestBody User fetchUser)
     {
-        User user = userService.getUserByChannelId(fetchUser.getUserId());
+        User user = userService.getUserByChannelAndUserId( fetchUser );
         return bookingService.showMyBookings(user);
     }
 
     @RequestMapping(value = "/showAll", method = RequestMethod.POST)
     public List<Meeting> showAllBookings(@RequestBody User fetchUser)
     {
-        User user = userService.getUserByChannelId(fetchUser.getUserId());
+        User user = userService.getUserByChannelAndUserId( fetchUser );
         return bookingService.showAllBookings(user);
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelRoomBooking(@RequestBody User fetchUser, @RequestBody Meeting meeting)
+    public String cancelRoomBooking(@RequestBody BookingModel model)
     {
-        User user = userService.getUserByChannelId(fetchUser.getUserId());
+    	User fetchUser = model.getUser();
+    	Meeting meeting = model.getMeeting();
+        User user = userService.getUserByChannelAndUserId( fetchUser );
         if (user == null)
         {
             return null;
