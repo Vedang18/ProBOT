@@ -1,9 +1,9 @@
-package com.prorigo.repositories;
+package com.probot.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.prorigo.entities.User;
+import com.probot.entities.User;
 
 /**
  * @author Vedang, Created on Sep 17, 2017

@@ -1,10 +1,10 @@
-package com.prorigo;
+package com.probot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-import com.prorigo.entities.User;
+import com.probot.entities.User;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
