@@ -17,6 +17,20 @@ function getAllHolidays(callback, errCallback){
     });;
 }
 
+function getHolidaysAfter(callback, errCallback){
+    fetch(prorigoRestEndpoint + '/api/holidays/after/' + date)
+    .then(function(response) {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server");
+        }
+        return response.json();
+    }).then(function(jsonResponse){
+        callback(jsonResponse);
+    }).catch(function(err){
+        errCallback(err);
+    });;
+}
+
 function getHolidays(callback, errCallback, body){
     var headers = {
         "Content-Type": "application/json",
@@ -52,5 +66,6 @@ function getAllBookings(callback, errCallback){
 module.exports = {
     getAllHolidays: getAllHolidays,
     getHolidays: getHolidays,
+    getHolidaysAfter: getHolidaysAfter,
     getAllBookings: getAllBookings
 }

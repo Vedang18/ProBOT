@@ -17,6 +17,7 @@ var bot = new builder.UniversalBot(connector, [
     function(session){
         var msg = session.message.text.toLowerCase();
         if(msg == '' ||msg == 'hi'){
+            session.send('Hello ' + session.message.address.user.name);
             session.send('welcome_title');
             session.send('welcome_info');
             session.send('Just type away your requests or queries');
@@ -27,56 +28,9 @@ var bot = new builder.UniversalBot(connector, [
 var luisAppUrl = process.env.LUIS_MODEL_URL
 bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 
-bot.dialog('ShowHolidays', [
-    function(session, args, next){
-        session.sendTyping();
-        var intent = args.intent;
-        var duration = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
-        logger.debug(duration);
-        if(duration == null){
-            prorigoRest.getAllHolidays(function(json){
-                var holidayMessage = createHolidayMessage(session, json);
-                session.send(holidayMessage);
-                session.endDialog();
-            }, function(err){
-                logger.error(err);
-                session.endDialog('something_went_wrong');
-            });
-        } else {
-            var actualDuration = duration.resolution.values[0];
-            var thisYear = new Date().getFullYear();
-            duration.resolution.values.forEach((val) =>{
-                if(val.start.startsWith(thisYear)){
-                    actualDuration = val;
-                }
-            })
-            prorigoRest.getHolidays(function(json){
-                var holidayMessage = createHolidayMessage(session, json);
-                session.send(holidayMessage);
-                session.endDialog();
-            },function(err){
-                logger.error(err);
-                session.endDialog('something_went_wrong');
-            }, {startDate : actualDuration.start, endDate: actualDuration.end});
-        }
-        
-    }
-]).triggerAction({
-    matches:'ShowHolidays'
-});
+bot.library(require('./dialogs/holidays').createLibrary());
+bot.library(require('./dialogs/bookings').createLibrary());
 
-bot.dialog('ShowBookingStatus',[function(session,args,next){
-    session.sendTyping();
-    
-    prorigoRest.getAllBookings(function(json){
-        var bookingMessage = createBookingMessage(session, json);
-        session.send(bookingMessage);
-        session.endDialog();
-    }, function(err){
-        logger.error(err);
-        session.endDialog('something_went_wrong');
-});
-}]).triggerAction({matches: 'ShowBookingStatus'});
 var room = require('./book-room');
 
 bot.dialog('bookrooms',room );
@@ -93,8 +47,6 @@ bot.set('localizerSettings', {
     botLocalePath: './bot/locale',
     defaultLocale: 'en'
 });
-
-
 
 // Trigger secondary dialogs when 'settings' or 'support' is called
 bot.use({
@@ -152,36 +104,6 @@ function beginDialog(address, dialogId, dialogArgs) {
 
 function sendMessage(message) {
     bot.send(message);
-}
-
-function createHolidayMessage(session, holidayJson){
-    var holidayMessageText = '';
-    if(holidayJson.length == 0){
-        holidayMessageText = 'No holidays';
-    } else {
-        holidayJson.forEach(function(holiday){
-            holidayMessageText += '* ' + holiday.reason + ' on ' + holiday.date + '\n\n';
-        });
-    }
-    var holidayMessage = new builder.Message(session);
-    holidayMessage.text(holidayMessageText).textFormat('markdown');
-    return holidayMessage;
-}
-
-function createBookingMessage(session, bookingJson){
-    var bookingMessageText = '';
-    if(bookingJson.length == 0){
-        bookingMessageText = 'No bookings';
-    } else {
-        bookingJson.forEach(function(booking){
-            bookingMessageText += '* Meeting in ' + booking.room + ' on ' + booking.date +' from ' 
-            + booking.fromTime + ' to ' + booking.toTime + ' for ' + reason + ' with ' + attendees + '\n\n';
-        });
-    }
-    
-    var bookingMessage = new builder.Message(session);
-    bookingMessage.text(bookingMessageText).textFormat('markdown');
-    return bookingMessage;
 }
 
 module.exports = {
