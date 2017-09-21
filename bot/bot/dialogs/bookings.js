@@ -23,7 +23,7 @@ lib.dialog('/ShowMyBookingStatus',[function(session,args,next){
     prorigoRest.getMyBookings(function(json){
         var bookingMessage = createBookingMessage(session, json);
         session.send(bookingMessage);
-        session.endDialog();
+        session.endDialog(); 
     }, function(err){
         logger.error(err);
         session.endDialog('something_went_wrong');
@@ -35,7 +35,7 @@ lib.dialog('/ShowMyBookingStatus',[function(session,args,next){
 lib.dialog('/CancelBooking',[function(session,args,next){
     session.sendTyping();
     prorigoRest.getMyBookings(function(json){
-        var bookingMessage = createBookingMessage(session, json);
+        var showBookingsMessage = createShowBookingMessage(session, json);
         session.send(bookingMessage);
         session.endDialog();
     }, function(err){
@@ -43,9 +43,22 @@ lib.dialog('/CancelBooking',[function(session,args,next){
         session.endDialog('something_went_wrong');
     },{userId : 'test', channelId: 'skype'});
 }]).triggerAction({
-    matches: 'ShowBookingStatus'
+    matches: 'CancelRoom'
 });
 
+function createShowBookingMessage(session, jsonBody){
+    if (jsonBody.length == 0){
+        showBookingsMessage : "You have no reserved room"
+    }else{
+        var room_list = []
+        for (var i=0; i<jsonBody.length; i++){
+            room_list[i] = jsonBody[i].room + "  "+ jsonBody[i].date + "  " + jsonBody[i].fromTime + " to " + jsonBody[i].toTime
+            }
+        
+        builder.Prompts.choice(session, "Which room do you want to cancel?", room_list, {listStyle: 3})
+        }
+    }
+     
 lib.dialog('/bookRoom', [
     function(session, args, next){
         session.sendTyping();

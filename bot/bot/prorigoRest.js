@@ -107,5 +107,7 @@ module.exports = {
     getAllHolidays: getAllHolidays,
     getHolidays: getHolidays,
     getHolidaysAfter: getHolidaysAfter,
-    getAllBookings: getAllBookings
+    getAllBookings: getAllBookings,
+    cancelBookings: cancelBookings,
+    getMyBookings: getMyBookings  
 }
