@@ -87,9 +87,9 @@ public class Bookie
 			HtmlInput inputReason = form.getInputByName( "Title" );
 			inputReason.type( meeting.getReason() );
 
-			HtmlSelect attendies = (HtmlSelect) page.getElementById("AttendeesIds");
+			HtmlSelect attendees = (HtmlSelect) page.getElementById("AttendeesIds");
 			for (String participant : meeting.getAttendees()) {
-				attendies.getOptionByText(participant).setSelected(true);
+				attendees.getOptionByText(participant).setSelected(true);
 			}
 			
 			button.click();
