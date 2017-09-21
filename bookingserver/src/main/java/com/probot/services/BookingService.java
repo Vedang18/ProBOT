@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
+import com.probot.exceptions.InvalidInputException;
 import com.probot.helper.Bookie;
 
 /**
@@ -25,10 +26,13 @@ public class BookingService implements IBookingService
         try
         {
             bookie.roomBooking(user, meeting);
-        } catch (Exception e)
+        } catch (InvalidInputException e)
         {
             e.printStackTrace();
-        }
+            System.out.println(e.getErrors());
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 
     public List<Meeting> showMyBookings(User user)

@@ -30,6 +30,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.common.collect.Iterables;
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
+import com.probot.exceptions.InvalidInputException;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
@@ -60,7 +61,7 @@ public class Bookie
 		try ( final WebClient webClient = new WebClient( BrowserVersion.FIREFOX_52 ) )
 		{
 			webClient.getOptions().setCssEnabled( false );
-			webClient.getOptions().setJavaScriptEnabled( false );
+			//webClient.getOptions().setJavaScriptEnabled( false );
 			addCredentials( user, webClient );
 
 			String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( BOOKING ).toString();
@@ -94,6 +95,11 @@ public class Bookie
 				if (domElement.getAttribute("class").contains("field-validation-error")) {
 					errorMessages.add(domElement.getTextContent());
 				}
+			}
+			
+			if(errorMessages.size() > 0)
+			{
+				throw new InvalidInputException(errorMessages);
 			}
 		}
 	}
