@@ -49,12 +49,48 @@ function getHolidays(callback, errCallback, body){
     })
 }
 
-function getAllBookings(callback, errCallback,json){
+function getAllBookings(callback, errCallback, json){
 	var headers = {
         "Content-Type": "application/json",
         "Accept": "application/json"
     };
     fetch(prorigoRestEndpoint + '/api/room/showAll',  {method: 'POST', body: JSON.stringify(json), headers: headers})
+    .then(function(response) {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server");
+        }
+        return response.json();
+    }).then(function(jsonResponse){
+        callback(jsonResponse);
+    }).catch(function(err){
+        errCallback(err);
+    });;
+}
+
+function getMyBookings(callback, errCallback, json){
+	var headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    };
+    fetch(prorigoRestEndpoint + '/api/room/show',  {method: 'POST', body: JSON.stringify(json), headers: headers})
+    .then(function(response) {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server");
+        }
+        return response.json();
+    }).then(function(jsonResponse){
+        callback(jsonResponse);
+    }).catch(function(err){
+        errCallback(err);
+    });;
+}
+
+function cancelBookings(callback, errCallback, json){
+	var headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    };
+    fetch(prorigoRestEndpoint + '/api/room/cancel',  {method: 'POST', body: JSON.stringify(json), headers: headers})
     .then(function(response) {
         if (response.status >= 400) {
             throw new Error("Bad response from server");

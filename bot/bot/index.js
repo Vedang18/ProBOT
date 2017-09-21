@@ -25,7 +25,7 @@ var bot = new builder.UniversalBot(connector, [
     }
 ]);
 
-var luisAppUrl = process.env.LUIS_MODEL_URL
+var luisAppUrl = process.env.LUIS_MODEL_URL;
 bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 
 bot.library(require('./dialogs/holidays').createLibrary());

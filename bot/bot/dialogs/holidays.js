@@ -25,7 +25,7 @@ lib.dialog('/', [
                 if(val.start.startsWith(thisYear)){
                     actualDuration = val;
                 }
-            })
+            });
             prorigoRest.getHolidays(function(json){
                 var holidayMessage = createHolidayMessage(session, json);
                 session.send(holidayMessage);
