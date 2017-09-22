@@ -1,4 +1,4 @@
-package com.probot.services;
+package com.probot.services.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.probot.entities.User;
 import com.probot.helper.PasswordCoder;
 import com.probot.repositories.UserRepository;
+import com.probot.services.IUserService;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
@@ -24,17 +25,19 @@ public class UserService implements IUserService
     @Override
     public User getUserByChannelAndUserId(User user)
     {
-		return userRepository.findByChannelIdAndUserId( user.getChannelId(), user.getUserId() );
+        return userRepository.findByChannelIdAndUserId(user.getChannelId(), user.getUserId());
     }
 
     @Override
     public User save( String channelId, String userId, String username, String password ) throws Exception
     {
+        // Create user object
         User user = new User();
         user.setChannelId( channelId );
         user.setUserId( userId );
         user.setUsername( username );
         user.setPassword( passwordCoder.encrypt( password ) );
+
         return userRepository.save( user );
     }
 

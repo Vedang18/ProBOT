@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.probot.entities.User;
 
 /**
+ * Repository for fetching user related information
  * @author Vedang, Created on Sep 17, 2017
  *
  */
@@ -14,5 +15,4 @@ public interface UserRepository extends CrudRepository<User, Integer>
 {
 	User findByChannelIdAndUserId( String channelId, String userId );
 	User findByUsername( String username );
-
 }

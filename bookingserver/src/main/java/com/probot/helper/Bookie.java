@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,6 +47,7 @@ public class Bookie
     private static final String SHOW_ALL_BOOKINGS = "/conference/Home/AllBooking";
     private static final String CANCEL_BOOKING = "/conference/Booking/Edit";
 
+    private static final Logger logger = Logger.getLogger( Bookie.class );
     @Autowired
     PasswordCoder passwordCoder;
 
@@ -61,6 +63,7 @@ public class Bookie
 
             String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( BOOKING ).toString();
             HtmlPage page = webClient.getPage( pageUrl );
+            logger.debug("Page loaded");
 
             HtmlForm form = page.getForms().get( 0 );
             HtmlButton button = form.getFirstByXPath( "//*[@id=\"Submit\"]" );
@@ -94,8 +97,10 @@ public class Bookie
                     attendees.getOptionByText( participant ).setSelected( true );
                 }
             }
+            logger.debug("Page filled, clicking button");
             button.click();
 
+            // Error check
             DomNodeList< DomElement > list = page.getElementsByTagName( "span" );
             for( DomElement domElement : list )
             {
@@ -133,9 +138,11 @@ public class Bookie
         String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( uri ).toString();
         HtmlPage page = webClient.getPage( pageUrl );
 
+        logger.debug("Page loaded");
         HtmlTable table = (HtmlTable)page.getByXPath( ".//*[@id='Grid']/table" ).get( 0 );
         List< HtmlTableRow > rows = table.getRows();
 
+        logger.debug("Retriving information for " + uri);
         for( HtmlTableRow htmlTableRow : Iterables.skip( rows, 1 ) )
         {
             Meeting meeting = new Meeting();
@@ -150,10 +157,12 @@ public class Bookie
             String bookingDate = split[1].trim();
             DateFormat format = new SimpleDateFormat( "MM/dd/yyyy", Locale.ENGLISH );
             meeting.setDate( format.parse( bookingDate ) );
+
             String bookingTime = split[2].trim();
             String[] timeArray = bookingTime.split( "-" );
             meeting.setFromTime( timeArray[0].trim() );
             meeting.setToTime( timeArray[1].trim() );
+
             meeting.setReason( split[3].trim() );
             if( uri.equals( SHOW_ALL_BOOKINGS ) )
             {
@@ -173,17 +182,20 @@ public class Bookie
     {
         try ( final WebClient webClient = new WebClient() )
         {
-
             addCredentials( user, webClient );
+
             String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( CANCEL_BOOKING ).toString() + "/" + meeting.getMeetingId();
             HtmlPage page = webClient.getPage( pageUrl );
 
+            logger.debug("Page loaded");
             HtmlForm form = page.getForms().get( 0 );
             HtmlButton button = form.getFirstByXPath( ".//*[@id='CancelBooking']" );
 
+            logger.debug("Clicking Cancel booking");
             button.click();
             Thread.sleep( 1000 );
 
+            logger.debug("Confirming Cancellation");
             HtmlButton confirmButton = (HtmlButton)page.getByXPath( "html/body/div[4]/div[3]/div/button[1]" ).get( 0 );
             confirmButton.click();
         }
@@ -192,8 +204,9 @@ public class Bookie
 
 
     /**
+     * Gets meeting id of meeting
      * @param htmlTableRow
-     * @return
+     * @return meeting Id
      * @throws URISyntaxException
      */
     private String getMeetingId( HtmlTableRow htmlTableRow ) throws URISyntaxException
@@ -211,6 +224,7 @@ public class Bookie
     }
 
     /**
+     * Adds credentials to access intranet
      * @param user
      * @param webClient
      * @throws Exception
@@ -225,8 +239,9 @@ public class Bookie
     }
 
     /**
+     * Gets meeting id of meeting from meeting url  
      * @param url
-     * @return
+     * @return meeting Id
      * @throws URISyntaxException
      */
     private String getMeetingUniqueId( String url ) throws URISyntaxException

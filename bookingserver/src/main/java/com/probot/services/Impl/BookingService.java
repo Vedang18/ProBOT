@@ -1,4 +1,4 @@
-package com.probot.services;
+package com.probot.services.Impl;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
 import com.probot.helper.Bookie;
+import com.probot.services.IBookingService;
 
 /**
  * @author Vedang, Created on Sep 18, 2017

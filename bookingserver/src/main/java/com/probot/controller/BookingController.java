@@ -47,7 +47,7 @@ public class BookingController
     @ApiOperation( value = "Performs room booking" )
     public String bookRoom( @RequestBody BookingModel model, HttpServletResponse response ) throws IOException
     {
-        logger.debug( "Booking " + model.getMeeting() );
+        logger.info( "Booking " + model.getMeeting() );
         User fetchUser = model.getUser();
         Meeting meeting = model.getMeeting();
         User user = checkUserExistance( response, fetchUser );
@@ -82,7 +82,7 @@ public class BookingController
         }
         try
         {
-            logger.debug( "showing booking of " + user.getUsername() );
+            logger.info( "showing booking of " + user.getUsername() );
             return bookingService.showMyBookings( user );
         }
         catch( FailingHttpStatusCodeException e )
@@ -107,7 +107,7 @@ public class BookingController
         }
         try
         {
-            logger.debug( "showing all booking" );
+            logger.info( "showing all booking" );
             return bookingService.showAllBookings( user );
         }
         catch( FailingHttpStatusCodeException e )
@@ -127,7 +127,7 @@ public class BookingController
     {
         User fetchUser = model.getUser();
         Meeting meeting = model.getMeeting();
-        logger.debug( "Canceling boooking of " + meeting );
+        logger.info( "Canceling booking of " + meeting );
         User user = checkUserExistance( response, fetchUser );
         if( user == null )
         {

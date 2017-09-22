@@ -39,7 +39,7 @@ public class HolidayController
     @RequestMapping( value = "/all", method = RequestMethod.POST )
     public List< Holidays > getAllHolidays()
     {
-        logger.debug( "Fetching all holidays" );
+        logger.info( "Fetching all holidays" );
         List< Holidays > allHolidays = holidayService.getAllHolidays();
         return allHolidays;
     }
@@ -49,14 +49,14 @@ public class HolidayController
     {
         SimpleDateFormat sdf = new SimpleDateFormat( "dd-MM-yyyy" );
         Date actualDate = sdf.parse( date );
-        logger.debug( "Fetching holidays after " + actualDate );
+        logger.info( "Fetching holidays after " + actualDate );
         return holidayService.getHolidaysafter( actualDate );
     }
 
     @RequestMapping( value = "/in", method = RequestMethod.POST )
     public List< Holidays > getHolidaysAfter( @RequestBody HolidayModel holidayModel ) throws ParseException
     {
-        logger.debug( "Fetching holidays from " + holidayModel.getStartDate() + "to " + holidayModel.getEndDate() );
+        logger.info( "Fetching holidays from " + holidayModel.getStartDate() + "to " + holidayModel.getEndDate() );
         return holidayService.getHolidaysInBetween( holidayModel.getStartDate(), holidayModel.getEndDate() );
     }
 

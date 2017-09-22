@@ -15,6 +15,7 @@ import com.probot.entities.User;
 public class BookingServerApplication
 {
 
+    // Entry point 
     public static void main(String[] args)
     {
 	SpringApplication.run(BookingServerApplication.class, args);

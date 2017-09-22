@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.probot.entities.Holidays;
 
 /**
+ * Repository for fetching holidays related information
  * @author Vedang, Created on Sep 17, 2017
  *
  */
