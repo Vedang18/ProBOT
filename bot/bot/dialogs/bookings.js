@@ -90,18 +90,15 @@ lib.dialog('/CancelBooking',[function(session,args,next){
 lib.dialog('/bookRoom', [
     function(session, args, next){
         session.sendTyping();
-        parseBookingEntities(args.intent);
-        session.dialogData.bookingInfo = {};
+        var bookingInfo = parseBookingEntities(args.intent);
+        if(!bookingInfo.startTime || !bookingInfo.endTime || bookingInfo.bookingDates.length == 0){
+            session.endDialog('could_not_determine_booking_time');
+        }
+        session.dialogData.bookingInfo = bookingInfo;
         next();
     }, function(session, results){
-        if(!session.dialogData.bookingInfo.roomName){
+        if(!session.dialogData.bookingInfo.bookingRoom){
             builder.Prompts.choice(session, 'Which room do you want to book?', ['Conf Room 4', 'Conf Room 1', 'Meeting room 3'], {listStyle : 3});
-        }
-    }, function(session, results){
-        // do rest API to LUIS to determine the room
-        session.dialogData.bookingInfo.roomName = results.response.entity;
-        if(!session.dialogData.bookingInfo.bookingFromDate){
-            builder.Prompts.time(session, 'Enter the time of booking');
         }
     },function(session, results){
         session.dialogData.bookingInfo.bookingFromDate = results.response.entity;
@@ -143,7 +140,7 @@ function parseBookingEntities(intent){
     // 4:00 to 5:00 pm on next monday
     var dateTimeRangeEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.datetimerange');
     // next 2 days
-    var dateRangeEntitiy = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
+    var dateRangeEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
     // today/tomorrow
     var dateEntities = builder.EntityRecognizer.findAllEntities(intent.entities, 'builtin.datetimeV2.date');
     // 4pm to 5pm
@@ -153,20 +150,39 @@ function parseBookingEntities(intent){
     // 1 hour
     var durationEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.duration');
     // cr1
-    var roomEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.room');
+    var roomEntity = builder.EntityRecognizer.findEntity(intent.entities, 'room');
     
     var bookingRoom = getBookingRoom(roomEntity);
-    var bookingStartTime = null;
-    var bookinsEndTime = null;
-    var bookingStartDate = null;
-    var bookingEndDate = null;
+    var bookingTimings = getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities, timeRangeEntity, timeEntity, durationEntity);
+
+    var bookingInfo = {
+        bookingDates: bookingTimings[0], 
+        bookingStartTime: bookingTimings[1],
+        bookingEndTime: bookingTimings[2],
+        bookingRoom: bookingRoom
+    }
+
+    return bookingInfo;
 }
 
-function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities, timeRangeEntity, timeEntity, durationEntity){
+function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities, 
+                        timeRangeEntity, timeEntity, durationEntity){
     var bookingDates = [];
+    var startTime = null;
+    var endTime = null;
+    var duration = null;
     var thisYear = new Date().getFullYear();
     if(dateTimeRangeEntity){
-
+        var start = dateTimeRangeEntity.resolution.values[0].start;
+        startTime = moment(start, 'YYYY-MM-DD HH:mm:ss');
+        startTime = moment(startTime.format('HH:mm:ss'), 'HH:mm:ss');
+        
+        var end = dateTimeRangeEntity.resolution.values[0].end;
+        endTime = moment(end, 'YYYY-MM-DD HH:mm:ss');
+        endTime = moment(endTime.format('HH:mm:ss'), 'HH:mm:ss');
+        
+        var bookingDate = moment(start, 'YYYY-MM-DD HH:mm:ss');
+        bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
     } else{
         if(dateRangeEntity){
             // what about if there are more dateRangeEntities
@@ -175,7 +191,7 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities, t
             var endDate = new Date(dateRangeEntity.resolution.values[0].end);
             for(var d = startDate; d <= endDate; d.setDate(d.getDate() + 1)){
                 if(d.getFullYear() >= thisYear){
-                    bookingDates.push(d);
+                    bookingDates.push(moment(d, 'YYYY-MM-DD'));
                 }
             }
         } else if(dateEntities){
@@ -185,26 +201,37 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities, t
                 var dateEntity = dateEntities[i];
                 for(var j = 0; j < dateEntity.resolution.values.length; j++){
                     var value = dateEntity.resolution.values[j];
-                    var valueDate = new Date(value)
-                    if(todaysDate.getTime() < valueDate){
-                        bookingDates.push(valueDate);
+                    var valueDate = new Date(value.value);
+                    if(todaysDate.getTime() < valueDate.getTime()){
+                        bookingDates.push(moment(valueDate));
                     }
                 }
             }
         }
 
         if(timeRangeEntity){
-            // var timeRangeEntityValues = timeRangeEntity.resolution.values[];
-            // var startTime = timeRangeEntityValues[0].
-            // for(var i = 0; i < timeRangeEntityValues; i++){
-            //     var startTime = 
-            // }
+            var timeRangeEntityValues = timeRangeEntity.resolution.values;
+            startTime = timeRangeEntityValues[0].start;
+            endTime = timeRangeEntityValues[0].end;
+            startTime = moment(startTime, 'HH:mm:ss');
+            endTime = moment(endTime, 'HH:mm:ss');
         } else if(timeEntity){
-
-        } else if(durationEntity){
-
+            startTime = timeEntity.resolution.values[0].value;
+            startTime = moment(startTime, 'HH:mm:ss');
+        }
+        if(durationEntity){
+            duration = durationEntity.resolution.values[0].value;
+            if(startTime){
+                endTime = moment(startTime);
+                endTime.add(parseInt(duration), 'seconds');
+            }
         }
     }
+
+    if(bookingDates.length == 0){
+        bookingDates.push(moment(moment(new Date()).format('YYYY-MM-DD')), 'YYYY-MM-DD'); 
+    }
+    return [bookingDates, startTime, endTime];
 }
 
 function getBookingRoom(roomEntity){
@@ -213,6 +240,18 @@ function getBookingRoom(roomEntity){
         room = roomEntity.resolution.values[0];
     }
     return room;
+}
+
+function numToTime(num) {
+    var sec_num = parseInt(num, 10); // 2nd param is base
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes+':'+seconds;
 }
 
 // Export createLibrary() function
