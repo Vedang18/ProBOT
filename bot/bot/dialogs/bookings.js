@@ -5,24 +5,44 @@ var moment = require('moment');
 
 var lib = new builder.Library('booking');
 
-// lib.dialog('/ShowBookingStatus',[
-//     function(session,args,next){
-//     session.sendTyping();
-//     var intent = args.intent;
-//     var  = builder.EntityRecognizer.findEntity(intent.entities, 'Note.Title');
+lib.dialog('/ShowBookingStatus',[
+    function(session,args,next){
+    session.sendTyping();
+    var intent = args.intent;
 
-//     prorigoRest.getAllBookings(function(json){
-//         var bookingMessage = createBookingMessage(session, json);
-//         session.send(bookingMessage);
-//         session.endDialog();
-//     }, function(err){
-//         logger.error(err);
-//         session.endDialog('something_went_wrong');
-//     },{userId : 'test', channelId: 'skype'});
-// }]).triggerAction({
-//     matches: 'ShowBookingStatus'
-// });
-
+    if(intent.entities){
+        if(builder.EntityRecognizer.findEntity(intent.entities, 'myBooking')){
+            prorigoRest.getMyBookings(function(json){
+                var bookingMessage = createBookingMessage(session, json);
+                session.send(bookingMessage);
+                session.endDialog();
+            }, function(err){
+                logger.error(err);
+                session.endDialog('something_went_wrong');
+            },{userId : 'test', channelId: 'skype'});
+        }else{
+            prorigoRest.getAllBookings(function(json){
+                var bookingMessage = createBookingMessage(session, json);
+                session.send(bookingMessage);
+                session.endDialog();
+            }, function(err){
+                logger.error(err);
+                session.endDialog('something_went_wrong');
+            },{userId : 'test', channelId: 'skype'});
+            } 
+        }else{
+            prorigoRest.getAllBookings(function(json){
+                var bookingMessage = createBookingMessage(session, json);
+                session.send(bookingMessage);
+                session.endDialog();
+            }, function(err){
+                logger.error(err);
+                session.endDialog('something_went_wrong');
+            },{userId : 'test', channelId: 'skype'});
+        }
+}]).triggerAction({
+    matches: 'ShowBookingStatus'
+});
 
 lib.dialog('/CancelBooking',[function(session,args,next){
     session.sendTyping();
