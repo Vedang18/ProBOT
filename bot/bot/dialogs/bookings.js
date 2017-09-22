@@ -72,11 +72,28 @@ lib.dialog('/bookRoom', [
     }, function(session, results){
         // do rest API to LUIS to determine the room
         session.dialogData.bookingInfo.roomName = results.response.entity;
-        // if(!session.dialogData.bookingInfo.)
+        if(!session.dialogData.bookingInfo.bookingFromDate){
+            builder.Prompts.time(session, 'Enter the time of booking');
+        }
+    },function(session, results){
+        session.dialogData.bookingInfo.bookingFromDate = results.response.entity;
+        if(!session.dialogData.bookingInfo.bookingPurpose){
+            builder.Prompts.text(session, 'Enter purpose of booking');
+        }
+    }, function(session, results){
+        session.dialogData.bookingInfo.bookingPurpose = results.response.entity;
+        session.endDialog();
     }
+    // },function(session, results){
+    //     session.dialogData.bookingInfo.
+    // }
 ]).triggerAction({
     matches: 'BookRoom'
 });
+
+lib.dialog('/attendees', [
+
+]);
 
 function createBookingMessage(session, bookingJson){
     var bookingMessageText = '';
