@@ -2,6 +2,7 @@ var builder = require('botbuilder');
 var logger = require('../log4js').logger;
 var querystring = require('querystring');
 var util = require('util');
+var prorigoRest = require('./prorigoRest');
 
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
@@ -22,25 +23,11 @@ var bot = new builder.UniversalBot(connector, [
             session.send('welcome_info');
             session.send('Just type away your requests or queries');
 
-            const channelId = session.message.address.channelId;
-            const userId = session.message.address.user.id;
-
-             const link = util.format(
-                '%s/login?userId=%s&channelId=%s',
-                "http://localhost:3978",
-                encodeURIComponent(userId),
-                encodeURIComponent(channelId));
-
-            var msg = new builder.Message(session) 
-            .attachments([ 
-                new builder.SigninCard(session) 
-                    .text("You must first login to your account.") 
-                    .button("signin", link) 
-            ]); 
-        session.endDialog(msg);
+            provideloginIfneeded(session);
         }
     }
 ]);
+
 
 var luisAppUrl = process.env.LUIS_MODEL_URL;
 bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
@@ -123,6 +110,32 @@ function sendMessage(message) {
     bot.send(message);
 }
 
+// TODO fix it properly
+function provideloginIfneeded(session) {
+    const channelId = session.message.address.channelId;
+    const userId = session.message.address.user.id;
+    prorigoRest.findUserByChannelIdAndUserId(function(json){
+        session.dialogData.userEntry = json;
+        session.endDialog();
+    }, function(err){
+        logger.error(err);
+        session.endDialog();
+    },{userId: 'test', channelId: 'skype' });
+
+    if(!session.dialogData.userEntry) {
+     const link = util.format(
+        '%s/login?userId=%s&channelId=%s',
+        "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
+
+    var msg = new builder.Message(session) 
+    .attachments([ 
+        new builder.SigninCard(session) 
+            .text("You must first login to your account.") 
+            .button("signin", link) 
+    ]); 
+    session.endDialog(msg);
+    }
+}
 module.exports = {
     listen: listen,
     beginDialog: beginDialog,

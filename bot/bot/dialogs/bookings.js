@@ -10,8 +10,7 @@ lib.dialog('/ShowBookingStatus',[
     session.sendTyping();
     var intent = args.intent;
 
-    if(intent.entities){
-        if(builder.EntityRecognizer.findEntity(intent.entities, 'myBooking')){
+    if(intent.entities && builder.EntityRecognizer.findEntity(intent.entities, 'myBooking')){
             prorigoRest.getMyBookings(function(json){
                 var bookingMessage = createBookingMessage(session, json);
                 session.send(bookingMessage);
@@ -19,7 +18,7 @@ lib.dialog('/ShowBookingStatus',[
             }, function(err){
                 logger.error(err);
                 session.endDialog('something_went_wrong');
-            },{userId : 'test', channelId: 'skype'});
+            },userInfo(session.message.address));
         }else{
             prorigoRest.getAllBookings(function(json){
                 var bookingMessage = createBookingMessage(session, json);
@@ -28,17 +27,7 @@ lib.dialog('/ShowBookingStatus',[
             }, function(err){
                 logger.error(err);
                 session.endDialog('something_went_wrong');
-            },{userId : 'test', channelId: 'skype'});
-            } 
-        }else{
-            prorigoRest.getAllBookings(function(json){
-                var bookingMessage = createBookingMessage(session, json);
-                session.send(bookingMessage);
-                session.endDialog();
-            }, function(err){
-                logger.error(err);
-                session.endDialog('something_went_wrong');
-            },{userId : 'test', channelId: 'skype'});
+            },userInfo(session.message.address));
         }
 }]).triggerAction({
     matches: 'ShowBookingStatus'
@@ -61,7 +50,7 @@ lib.dialog('/CancelBooking',[function(session,args,next){
     }, function(err){
         logger.error(err);
         session.endDialog('something_went_wrong');
-    },{userId : 'test', channelId: 'skype'});
+    },userInfo(session.message.address));
 },function(session,results){
     var meeting = session.dialogData.room_list[results.response.index];
     session.dialogData.meeting = meeting;
@@ -77,7 +66,7 @@ lib.dialog('/CancelBooking',[function(session,args,next){
                 session.endDialog("Booking deleted successfully!");
             }, function(){
                 session.endDialog('something_went_wrong');
-            },{user: {userId : 'test', channelId: 'skype'}, meeting: session.dialogData.meeting});
+            },{user: userInfo(session.message.address), meeting: session.dialogData.meeting});
         }else{
             session.endDialog();
         }
@@ -240,6 +229,11 @@ function getBookingRoom(roomEntity){
         room = roomEntity.resolution.values[0];
     }
     return room;
+}
+
+function userInfo(address){
+    //return {userId : 'test', channelId: 'skype'};
+    return {userId : address.user.id, channelId: address.channelId};
 }
 
 function numToTime(num) {

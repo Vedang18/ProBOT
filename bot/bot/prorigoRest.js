@@ -17,8 +17,12 @@ function getAllHolidays(callback, errCallback){
     });;
 }
 
-function getHolidaysAfter(callback, errCallback){
-    fetch(prorigoRestEndpoint + '/api/holidays/after/' + date)
+function getHolidaysAfter(callback, errCallback,date){
+    var headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    fetch(prorigoRestEndpoint + '/api/holidays/after/' + date, {method: 'POST', headers: headers})
     .then(function(response) {
         if (response.status >= 400) {
             throw new Error("Bad response from server");
@@ -36,7 +40,7 @@ function getHolidays(callback, errCallback, body){
         "Content-Type": "application/json",
         "Accept": "application/json"
     };
-    fetch(prorigoRestEndpoint + '/api/holidays', {method: 'POST', body: JSON.stringify(body), headers: headers})
+    fetch(prorigoRestEndpoint + '/api/holidays/in', {method: 'POST', body: JSON.stringify(body), headers: headers})
     .then(function(response){
         if (response.status >= 400) {
             throw new Error("Bad response from server");
@@ -121,6 +125,24 @@ function cancelBookings(callback, errCallback, json){
     });;
 }
 
+function findUserByChannelIdAndUserId(callback,errCallback,json) {
+    var headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    };
+    fetch(prorigoRestEndpoint + '/api/user/byChannelUserId',  {method: 'POST', body: JSON.stringify(json), headers: headers})
+    .then(function(response) {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server");
+        }
+        return response.json();
+    }).then(function(jsonResponse){
+        callback(jsonResponse);
+    }).catch(function(err){
+        errCallback(err);
+    });
+
+}
 module.exports = {
     getAllHolidays: getAllHolidays,
     getHolidays: getHolidays,
@@ -128,5 +150,6 @@ module.exports = {
     getAllBookings: getAllBookings,
     cancelBookings: cancelBookings,
     getMyBookings: getMyBookings ,
-    saveUser:saveUser 
+    saveUser:saveUser,
+    findUserByChannelIdAndUserId:findUserByChannelIdAndUserId
 }

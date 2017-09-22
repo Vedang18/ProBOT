@@ -1,10 +1,10 @@
 var builder = require('botbuilder');
 var logger = require('../../log4js').logger;
 var prorigoRest = require('../prorigoRest');
+var dateFormat = require('dateformat');
 
 var lib = new builder.Library('holidays');
-lib.dialog('/', [
-    function(session, args, next){
+lib.dialog('/', [function(session, args, next) {
         session.sendTyping();
         var intent = args.intent;
         var duration = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
@@ -26,7 +26,21 @@ lib.dialog('/', [
                     actualDuration = val;
                 }
             });
-            prorigoRest.getHolidays(function(json){
+            if(!actualDuration.end) {
+                var date = dateFormat(actualDuration.start,"dd-mm-yyyy");
+                console.log(date);
+                prorigoRest.getHolidaysAfter(
+                    function(json){
+                        var holidayMessage = createHolidayMessage(session, json);
+                        session.send(holidayMessage);
+                        session.endDialog();
+                    },function(err){
+                        logger.error(err);
+                        session.endDialog('something_went_wrong');
+                    }, date);
+            }
+            else {
+                prorigoRest.getHolidays(function(json){
                 var holidayMessage = createHolidayMessage(session, json);
                 session.send(holidayMessage);
                 session.endDialog();
@@ -35,9 +49,9 @@ lib.dialog('/', [
                 session.endDialog('something_went_wrong');
             }, {startDate : actualDuration.start, endDate: actualDuration.end});
         }
-        
     }
-]).triggerAction({
+        
+}]).triggerAction({
     matches:'ShowHolidays'
 });
 
