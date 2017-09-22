@@ -10,6 +10,7 @@ public interface IUserService
 {
 
     User getUserByChannelAndUserId(User user);
-    User save(String channelId, String userId, String username, String password);
-    User save(User user);
+    User getUserByUserName(String username);
+    User save(String channelId, String userId, String username, String password) throws Exception;
+    User save(User user) throws Exception;
 }

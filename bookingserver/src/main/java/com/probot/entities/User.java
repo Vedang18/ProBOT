@@ -2,6 +2,7 @@ package com.probot.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class User implements Serializable
     private int uid;
     private String channelId;
     private String userId;
+    @Column(unique=true)
     private String username;
     private String password;
 

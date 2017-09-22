@@ -13,5 +13,6 @@ import com.probot.entities.User;
 public interface UserRepository extends CrudRepository<User, Integer>
 {
 	User findByChannelIdAndUserId( String channelId, String userId );
+	User findByUsername( String username );
 
 }

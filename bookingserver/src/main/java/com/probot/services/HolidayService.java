@@ -38,15 +38,6 @@ public class HolidayService implements IHolidayService
     }
 
     @Override
-    public List<Holidays> getHolidaysInMonth(String month)
-    {
-        // FIXME ugly code
-        int m = Month.valueOf(month).getValue();
-        List<Holidays> holidays = getAllHolidays();
-        return holidays.subList(m / 2, (holidays.size() - 1));
-    }
-
-    @Override
     public List<Holidays> getHolidaysInBetween(Date startDate, Date endDate)
     {
         List<Holidays> holidays = new ArrayList<>();

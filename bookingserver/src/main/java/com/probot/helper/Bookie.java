@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,13 +66,16 @@ public class Bookie
             HtmlButton button = form.getFirstByXPath( "//*[@id=\"Submit\"]" );
 
             HtmlSelect select = (HtmlSelect)page.getElementById( "ConferenceRooms" );
-            HtmlOption option = select.getOptionByValue( meeting.getRoom() );
+            HtmlOption option = select.getOptionByText( meeting.getRoom() );
             select.setSelectedAttribute( option, true );
 
-            HtmlTextInput startDate = form.getFirstByXPath( ".//*[@id='StartDate']" );
-            DateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy" );
-            startDate.setAttribute( "value", formatter.format( meeting.getDate() ) );
-
+            Date date = meeting.getDate();
+            if( date != null )
+            {
+                HtmlTextInput startDate = form.getFirstByXPath( ".//*[@id='StartDate']" );
+                DateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy" );
+                startDate.setAttribute( "value", formatter.format( date ) );
+            }
             HtmlInput inputStartTime = form.getInputByName( "StartTime" );
             inputStartTime.setValueAttribute( meeting.getFromTime() );
 
@@ -81,15 +85,17 @@ public class Bookie
             HtmlInput inputReason = form.getInputByName( "Title" );
             inputReason.type( meeting.getReason() );
 
-            HtmlSelect attendees = (HtmlSelect)page.getElementById( "AttendeesIds" );
-            for( String participant : meeting.getAttendees() )
+            List< String > attendeesList = meeting.getAttendees();
+            if( attendeesList != null && attendeesList.size() > 0 )
             {
-                attendees.getOptionByText( participant ).setSelected( true );
+                HtmlSelect attendees = (HtmlSelect)page.getElementById( "AttendeesIds" );
+                for( String participant : attendeesList )
+                {
+                    attendees.getOptionByText( participant ).setSelected( true );
+                }
             }
-
             button.click();
 
-            //TODO : Handle exceptions
             DomNodeList< DomElement > list = page.getElementsByTagName( "span" );
             for( DomElement domElement : list )
             {
@@ -104,14 +110,6 @@ public class Bookie
                 throw new InvalidInputException( errorMessages );
             }
         }
-    }
-
-    private void addCredentials( User user, final WebClient webClient ) throws Exception
-    {
-        DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider)webClient
-            .getCredentialsProvider();
-        credentialsProvider.addNTLMCredentials( user.getUsername(), passwordCoder.decrypt( user.getPassword() ), WEBSITE,
-                                                80, "", "" );
     }
 
     public List< Meeting > showMyBookings( User user ) throws Exception
@@ -171,20 +169,6 @@ public class Bookie
         return bookings;
     }
 
-    private String getMeetingId( HtmlTableRow htmlTableRow ) throws URISyntaxException
-    {
-        String meetingId = null;
-        for( HtmlTableCell cell : htmlTableRow.getCells() )
-        {
-            if( cell.getElementsByTagName( "a" ).getLength() != 0 )
-            {
-                String url = cell.getElementsByTagName( "a" ).get( 0 ).getAttribute( "href" ).toString();
-                meetingId = getMeetingUniqueId( url );
-            }
-        }
-        return meetingId;
-    }
-
     public void cancelBooking( User user, Meeting meeting ) throws Exception
     {
         try ( final WebClient webClient = new WebClient() )
@@ -202,12 +186,49 @@ public class Bookie
 
             HtmlButton confirmButton = (HtmlButton)page.getByXPath( "html/body/div[4]/div[3]/div/button[1]" ).get( 0 );
             confirmButton.click();
-
-            System.out.println( "Booking cancelled" );
         }
 
     }
 
+
+    /**
+     * @param htmlTableRow
+     * @return
+     * @throws URISyntaxException
+     */
+    private String getMeetingId( HtmlTableRow htmlTableRow ) throws URISyntaxException
+    {
+        String meetingId = null;
+        for( HtmlTableCell cell : htmlTableRow.getCells() )
+        {
+            if( cell.getElementsByTagName( "a" ).getLength() != 0 )
+            {
+                String url = cell.getElementsByTagName( "a" ).get( 0 ).getAttribute( "href" ).toString();
+                meetingId = getMeetingUniqueId( url );
+            }
+        }
+        return meetingId;
+    }
+
+    /**
+     * @param user
+     * @param webClient
+     * @throws Exception
+     */
+    private void addCredentials( User user, final WebClient webClient ) throws Exception
+    {
+        DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider)webClient
+            .getCredentialsProvider();
+        credentialsProvider.addNTLMCredentials( user.getUsername(), passwordCoder.decrypt( user.getPassword() ), WEBSITE,
+                                                80, "", "" );
+        webClient.getOptions().setPrintContentOnFailingStatusCode( false );
+    }
+
+    /**
+     * @param url
+     * @return
+     * @throws URISyntaxException
+     */
     private String getMeetingUniqueId( String url ) throws URISyntaxException
     {
         URI uri = new URI( url );

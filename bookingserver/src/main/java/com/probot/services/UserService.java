@@ -28,27 +28,26 @@ public class UserService implements IUserService
     }
 
     @Override
-    public User save(String channelId, String userId, String username, String password)
+    public User save( String channelId, String userId, String username, String password ) throws Exception
     {
-        try
-        {
-            User user = new User();
-            user.setChannelId(channelId);
-            user.setUserId(userId);
-            user.setUsername(username);
-            user.setPassword(passwordCoder.encrypt(password));
-            return userRepository.save(user);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        User user = new User();
+        user.setChannelId( channelId );
+        user.setUserId( userId );
+        user.setUsername( username );
+        user.setPassword( passwordCoder.encrypt( password ) );
+        return userRepository.save( user );
     }
 
     @Override
-    public User save(User user)
+    public User save(User user) throws Exception
     {
         return save(user.getChannelId(), user.getUserId(), user.getUsername(), user.getPassword());
+    }
+
+    @Override
+    public User getUserByUserName( String username )
+    {
+        return userRepository.findByUsername( username );
     }
 
 }

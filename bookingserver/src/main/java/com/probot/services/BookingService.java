@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
-import com.probot.exceptions.InvalidInputException;
 import com.probot.helper.Bookie;
 
 /**
@@ -21,54 +20,28 @@ public class BookingService implements IBookingService
     @Autowired
     Bookie bookie;
 
-    public void bookRoom(User user, Meeting meeting)
+    public void bookRoom( User user, Meeting meeting ) throws Exception
     {
-        try
-        {
-            bookie.roomBooking(user, meeting);
-        } catch (InvalidInputException e)
-        {
-            e.printStackTrace();
-            System.out.println(e.getErrors());
-        } catch (Exception e) {
-			e.printStackTrace();
-		}
+        bookie.roomBooking( user, meeting );
     }
 
-    public List<Meeting> showMyBookings(User user)
+    public List< Meeting > showMyBookings( User user ) throws Exception
     {
-        List<Meeting> myBookings = null;
-        try
-        {
-            myBookings = bookie.showMyBookings(user);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        List< Meeting > myBookings = bookie.showMyBookings( user );
         return myBookings;
     }
 
     @Override
-    public List<Meeting> showAllBookings(User user)
+    public List< Meeting > showAllBookings( User user ) throws Exception
     {
-    	List<Meeting> allBookings = null;
-        try
-        {
-            allBookings = bookie.showAllBookings(user);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        List< Meeting > allBookings = bookie.showAllBookings( user );
         return allBookings;
     }
 
-	@Override
-	public void cancelRoomBooking(User user,Meeting meeting) {
-		try {
-			bookie.cancelBooking(user,meeting);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    @Override
+    public void cancelRoomBooking( User user, Meeting meeting ) throws Exception
+    {
+        bookie.cancelBooking( user, meeting );
 
-	}
+    }
 }
