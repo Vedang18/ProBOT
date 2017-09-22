@@ -1,7 +1,7 @@
 var builder = require('botbuilder');
 var logger = require('../log4js').logger;
-
-var prorigoRest = require('./prorigoRest');
+var querystring = require('querystring');
+var util = require('util');
 
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
@@ -21,6 +21,23 @@ var bot = new builder.UniversalBot(connector, [
             session.send('welcome_title');
             session.send('welcome_info');
             session.send('Just type away your requests or queries');
+
+            const channelId = session.message.address.channelId;
+            const userId = session.message.address.user.id;
+
+             const link = util.format(
+                '%s/login?userId=%s&channelId=%s',
+                "http://localhost:3978",
+                encodeURIComponent(userId),
+                encodeURIComponent(channelId));
+
+            var msg = new builder.Message(session) 
+            .attachments([ 
+                new builder.SigninCard(session) 
+                    .text("You must first login to your account.") 
+                    .button("signin", link) 
+            ]); 
+        session.endDialog(msg);
         }
     }
 ]);
