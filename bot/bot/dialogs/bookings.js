@@ -1,6 +1,7 @@
 var builder = require('botbuilder');
 var logger = require('../../log4js').logger;
 var prorigoRest = require('../prorigoRest');
+var moment = require('moment');
 
 var lib = new builder.Library('booking');
 
@@ -120,13 +121,13 @@ function createBookingMessage(session, bookingJson){
 
 function parseBookingEntities(intent){
     // 4:00 to 5:00 pm on next monday
-    var roomEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.datetimerange');
+    var dateTimeRangeEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.datetimerange');
     // next 2 days
-    var dateRange = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
+    var dateRangeEntitiy = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
     // today/tomorrow
-    var dateEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.date');
+    var dateEntities = builder.EntityRecognizer.findAllEntities(intent.entities, 'builtin.datetimeV2.date');
     // 4pm to 5pm
-    var timeRange = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.timerange');
+    var timeRangeEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.timerange');
     // 4:00
     var timeEntity = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.time');
     // 1 hour
@@ -139,6 +140,51 @@ function parseBookingEntities(intent){
     var bookinsEndTime = null;
     var bookingStartDate = null;
     var bookingEndDate = null;
+}
+
+function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities, timeRangeEntity, timeEntity, durationEntity){
+    var bookingDates = [];
+    var thisYear = new Date().getFullYear();
+    if(dateTimeRangeEntity){
+
+    } else{
+        if(dateRangeEntity){
+            // what about if there are more dateRangeEntities
+            // dates should start from this year
+            var startDate = new Date(dateRangeEntity.resolution.values[0].start);
+            var endDate = new Date(dateRangeEntity.resolution.values[0].end);
+            for(var d = startDate; d <= endDate; d.setDate(d.getDate() + 1)){
+                if(d.getFullYear() >= thisYear){
+                    bookingDates.push(d);
+                }
+            }
+        } else if(dateEntities){
+            for(var i = 0; i < dateEntities.length; i++){
+                var todaysDate = new Date();
+                todaysDate.setHours(0,0,0,0);
+                var dateEntity = dateEntities[i];
+                for(var j = 0; j < dateEntity.resolution.values.length; j++){
+                    var value = dateEntity.resolution.values[j];
+                    var valueDate = new Date(value)
+                    if(todaysDate.getTime() < valueDate){
+                        bookingDates.push(valueDate);
+                    }
+                }
+            }
+        }
+
+        if(timeRangeEntity){
+            // var timeRangeEntityValues = timeRangeEntity.resolution.values[];
+            // var startTime = timeRangeEntityValues[0].
+            // for(var i = 0; i < timeRangeEntityValues; i++){
+            //     var startTime = 
+            // }
+        } else if(timeEntity){
+
+        } else if(durationEntity){
+
+        }
+    }
 }
 
 function getBookingRoom(roomEntity){
