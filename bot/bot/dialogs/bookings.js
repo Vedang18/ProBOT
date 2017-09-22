@@ -4,60 +4,67 @@ var prorigoRest = require('../prorigoRest');
 
 var lib = new builder.Library('booking');
 
-lib.dialog('/ShowBookingStatus',[function(session,args,next){
-    session.sendTyping();
-    prorigoRest.getAllBookings(function(json){
-        var bookingMessage = createBookingMessage(session, json);
-        session.send(bookingMessage);
-        session.endDialog();
-    }, function(err){
-        logger.error(err);
-        session.endDialog('something_went_wrong');
-    },{userId : 'test', channelId: 'skype'});
-}]).triggerAction({
-    matches: 'ShowBookingStatus'
-});
+// lib.dialog('/ShowBookingStatus',[
+//     function(session,args,next){
+//     session.sendTyping();
+//     var intent = args.intent;
+//     var  = builder.EntityRecognizer.findEntity(intent.entities, 'Note.Title');
 
-lib.dialog('/ShowMyBookingStatus',[function(session,args,next){
-    session.sendTyping();
-    prorigoRest.getMyBookings(function(json){
-        var bookingMessage = createBookingMessage(session, json);
-        session.send(bookingMessage);
-        session.endDialog(); 
-    }, function(err){
-        logger.error(err);
-        session.endDialog('something_went_wrong');
-    },{userId : 'test', channelId: 'skype'});
-}]).triggerAction({
-    matches: 'ShowBookingStatus'
-});
+//     prorigoRest.getAllBookings(function(json){
+//         var bookingMessage = createBookingMessage(session, json);
+//         session.send(bookingMessage);
+//         session.endDialog();
+//     }, function(err){
+//         logger.error(err);
+//         session.endDialog('something_went_wrong');
+//     },{userId : 'test', channelId: 'skype'});
+// }]).triggerAction({
+//     matches: 'ShowBookingStatus'
+// });
+
 
 lib.dialog('/CancelBooking',[function(session,args,next){
     session.sendTyping();
-    prorigoRest.getMyBookings(function(json){
-        var showBookingsMessage = createShowBookingMessage(session, json);
-        session.send(bookingMessage);
-        session.endDialog();
+    prorigoRest.getMyBookings(function(jsonBody){
+        if (jsonBody.length == 0){
+            var showBookingsMessage = "You have no reserved room"
+            session.send(showBookingsMessage)
+        }else{
+            var room_list = [];
+            for (var i=0; i<jsonBody.length; i++){
+                room_list[i] = jsonBody[i].room + "  "+ jsonBody[i].date + "  " + jsonBody[i].fromTime + " to " + jsonBody[i].toTime;
+                }
+                session.dialogData.room_list = jsonBody;
+            builder.Prompts.choice(session, "Which room do you want to cancel?", room_list, {listStyle: 3})
+            }
     }, function(err){
         logger.error(err);
         session.endDialog('something_went_wrong');
     },{userId : 'test', channelId: 'skype'});
-}]).triggerAction({
+},function(session,results){
+    var meeting = session.dialogData.room_list[results.response.index];
+    session.dialogData.meeting = meeting;
+    var promptMsg1 = "Are you sure you want to cancel ";
+    var promptMsg2 = meeting.room +" on " + meeting.date + " from " + meeting.fromTime + " to " + meeting.toTime + " ?";
+    var promptMsg = promptMsg1 + promptMsg2;
+    builder.Prompts.choice(session,promptMsg,["Yes","No"], {listStyle : 3});
+    },
+    function(session, results){
+        session.dialogData.ans = results.response.entity;
+        if(session.dialogData.ans == "Yes"){
+            prorigoRest.cancelBookings(function(){
+                session.endDialog("Booking deleted successfully!");
+            }, function(){
+                session.endDialog('something_went_wrong');
+            },{user: {userId : 'test', channelId: 'skype'}, meeting: session.dialogData.meeting});
+        }else{
+            session.endDialog();
+        }
+    }    
+    ]).triggerAction({
     matches: 'CancelRoom'
 });
 
-function createShowBookingMessage(session, jsonBody){
-    if (jsonBody.length == 0){
-        showBookingsMessage : "You have no reserved room"
-    }else{
-        var room_list = []
-        for (var i=0; i<jsonBody.length; i++){
-            room_list[i] = jsonBody[i].room + "  "+ jsonBody[i].date + "  " + jsonBody[i].fromTime + " to " + jsonBody[i].toTime
-            }
-        
-        builder.Prompts.choice(session, "Which room do you want to cancel?", room_list, {listStyle: 3})
-        }
-    }
      
 lib.dialog('/bookRoom', [
     function(session, args, next){
