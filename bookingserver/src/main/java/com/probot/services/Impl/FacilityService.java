@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.probot.entities.Attendees;
 import com.probot.repositories.AttendeesRepository;
@@ -15,6 +16,7 @@ import com.probot.services.IFacilityService;
  * @author Vedang, Created on Sep 23, 2017
  *
  */
+@Service
 public class FacilityService implements IFacilityService
 {
 

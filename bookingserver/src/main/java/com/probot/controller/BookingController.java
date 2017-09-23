@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.probot.entities.Meeting;
 import com.probot.entities.User;
+import com.probot.exceptions.InvalidInputException;
 import com.probot.models.BookingModel;
 import com.probot.services.IBookingService;
 import com.probot.services.IUserService;
@@ -62,13 +63,24 @@ public class BookingController
         }
         catch( FailingHttpStatusCodeException e )
         {
+            response.setHeader( "Errors", e.getMessage() );
             response.sendError( e.getStatusCode(), e.getMessage() );
+            return JSONObject.quote( e.getMessage() );
+        }
+        catch( InvalidInputException e )
+        {
+            logger.error( e.getErrors().toString() );
+            response.setHeader( "Errors", e.getErrors().get( 0 ) );
+            response.sendError( 413, e.getErrors().get( 0 ) );
+            return null;
         }
         catch( Exception e )
         {
-            response.sendError( 500, e.getMessage() );
+            logger.error( "Failed to book a room", e );
+            response.setHeader( "Errors", e.getMessage() );
+            response.sendError( 500, "Failed to book a room" );
+            return null;
         }
-        return null;
     }
 
     @RequestMapping( value = "/show", method = RequestMethod.POST )
@@ -91,7 +103,8 @@ public class BookingController
         }
         catch( Exception e )
         {
-            response.sendError( 500, e.getMessage() );
+            logger.error( "Failed to get my room booking", e );
+            response.sendError( 500, "Failed to get my room booking" );
         }
         return null;
     }
@@ -116,7 +129,8 @@ public class BookingController
         }
         catch( Exception e )
         {
-            response.sendError( 500, e.getMessage() );
+            logger.error( "Failed to get all room booking", e );
+            response.sendError( 500, "Failed to get all room booking" );
         }
         return null;
     }
@@ -144,7 +158,8 @@ public class BookingController
         }
         catch( Exception e )
         {
-            response.sendError( 500, e.getMessage() );
+            logger.error( "Failed to cancel room booking", e );
+            response.sendError( 500, "Failed to cancel room booking" );
         }
         return null;
     }

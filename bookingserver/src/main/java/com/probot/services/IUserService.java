@@ -13,4 +13,5 @@ public interface IUserService
     User getUserByUserName(String username);
     User save(String channelId, String userId, String username, String password) throws Exception;
     User save(User user) throws Exception;
+    void testLogin( User user ) throws Exception;
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.probot.entities.User;
+import com.probot.helper.Bookie;
 import com.probot.helper.PasswordCoder;
 import com.probot.repositories.UserRepository;
 import com.probot.services.IUserService;
@@ -22,6 +23,9 @@ public class UserService implements IUserService
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    Bookie bookie;
+
     @Override
     public User getUserByChannelAndUserId(User user)
     {
@@ -31,14 +35,20 @@ public class UserService implements IUserService
     @Override
     public User save( String channelId, String userId, String username, String password ) throws Exception
     {
+        User user = createUser( channelId, userId, username, password );
+
+        return userRepository.save( user );
+    }
+
+    private User createUser( String channelId, String userId, String username, String password ) throws Exception
+    {
         // Create user object
         User user = new User();
         user.setChannelId( channelId );
         user.setUserId( userId );
         user.setUsername( username );
         user.setPassword( passwordCoder.encrypt( password ) );
-
-        return userRepository.save( user );
+        return user;
     }
 
     @Override
@@ -51,6 +61,13 @@ public class UserService implements IUserService
     public User getUserByUserName( String username )
     {
         return userRepository.findByUsername( username );
+    }
+    
+    @Override
+    public void testLogin( User user ) throws Exception
+    {
+        User createdUser = createUser( user.getChannelId(), user.getUserId(), user.getUsername(), user.getPassword() );
+        bookie.navigateToPage( createdUser, false );
     }
 
 }

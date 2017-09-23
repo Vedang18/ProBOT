@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.probot.entities.User;
 import com.probot.services.IUserService;
 
@@ -37,45 +38,48 @@ public class UserController
         logger.info( "Saving user details of " + user.getUsername() );
         try
         {
+            userService.testLogin( user );
             userService.save( user );
-
             return JSONObject.quote( "User added successfully" );
+        }
+        catch( FailingHttpStatusCodeException e )
+        {
+            response.sendError( e.getStatusCode(), e.getMessage() );
         }
         catch( Exception e )
         {
-            response.sendError( 500, e.getMessage() );
-            return null;
+            logger.error( "Failed to add User", e );
+            response.sendError( 500, "Failed to add User" );
         }
+        return JSONObject.quote( "Failed to add User" );
     }
 
-    @RequestMapping( value="/byName",  method = RequestMethod.POST )
+    @RequestMapping( value = "/byName", method = RequestMethod.POST )
     public User getUserByUserName( @RequestBody User user, HttpServletResponse response ) throws IOException
     {
         logger.info( "Getting user details of " + user.getUsername() );
-        try
+        User userDetail = userService.getUserByUserName( user.getUsername() );
+        if( userDetail == null )
         {
-            return userService.getUserByUserName( user.getUsername() );
-        }
-        catch( Exception e )
-        {
-            response.sendError( 500, e.getMessage() );
+            logger.info( "No user with user Id " + user.getUserId() + " found" );
+            response.sendError( 401, "User does not exists" );
             return null;
         }
+        return user;
     }
-    
+
     @RequestMapping( value = "/byChannelUserId", method = RequestMethod.POST )
     public User getUserByChannelIdAndUserId( @RequestBody User user, HttpServletResponse response ) throws IOException
     {
-        logger.debug( "Getting user details of " + user.getUserId() );
-        try
+        logger.debug( "Getting user details of user " + user.getUserId() + " channel " + user.getChannelId() );
+        User userDetail = userService.getUserByChannelAndUserId( user );
+        if( userDetail == null )
         {
-            return userService.getUserByChannelAndUserId( user );
-        }
-        catch( Exception e )
-        {
-            response.sendError( 500, e.getMessage() );
+            logger.info( "No user with user Id " + user.getUserId() + " found" );
+            response.sendError( 401, "User does not exists" );
             return null;
         }
+        return user;
     }
 
 }

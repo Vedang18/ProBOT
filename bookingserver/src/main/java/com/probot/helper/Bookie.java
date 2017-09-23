@@ -1,7 +1,10 @@
 package com.probot.helper;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
@@ -42,12 +48,17 @@ public class Bookie
 {
 
     private static final String WEBSITE = "apps.prorigo.com";
+
     private static final String BOOKING = "/conference/Booking";
+
     private static final String SHOW_MY_BOOKINGS = "/conference/Home/MyBooking";
+
     private static final String SHOW_ALL_BOOKINGS = "/conference/Home/AllBooking";
-    private static final String CANCEL_BOOKING = "/conference/Booking/Edit";
+
+    private static final String CANCEL_BOOKING = "/conference/Booking/Delete";
 
     private static final Logger logger = Logger.getLogger( Bookie.class );
+
     @Autowired
     PasswordCoder passwordCoder;
 
@@ -55,65 +66,67 @@ public class Bookie
     {
 
         List< String > errorMessages = new ArrayList< String >();
+        HtmlPage page = navigateToPage( user, BOOKING, true );
+        logger.debug( "Page loaded" );
 
-        try ( final WebClient webClient = new WebClient() )
+        HtmlForm form = page.getForms().get( 0 );
+        HtmlButton button = form.getFirstByXPath( "//*[@id=\"Submit\"]" );
+
+        HtmlSelect select = (HtmlSelect)page.getElementById( "ConferenceRooms" );
+        HtmlOption option = select.getOptionByText( meeting.getRoom() );
+        select.setSelectedAttribute( option, true );
+
+        Date date = meeting.getDate();
+        if( date != null )
         {
-            webClient.getOptions().setCssEnabled( false );
-            addCredentials( user, webClient );
+            HtmlTextInput startDate = form.getFirstByXPath( ".//*[@id='StartDate']" );
+            DateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy" );
+            startDate.setAttribute( "value", formatter.format( date ) );
+        }
 
-            String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( BOOKING ).toString();
-            HtmlPage page = webClient.getPage( pageUrl );
-            logger.debug("Page loaded");
+        HtmlInput inputStartTime = form.getInputByName( "StartTime" );
+        inputStartTime.setValueAttribute( meeting.getFromTime() );
 
-            HtmlForm form = page.getForms().get( 0 );
-            HtmlButton button = form.getFirstByXPath( "//*[@id=\"Submit\"]" );
+        HtmlInput inputEndTime = form.getInputByName( "EndTime" );
+        inputEndTime.setValueAttribute( meeting.getToTime() );
 
-            HtmlSelect select = (HtmlSelect)page.getElementById( "ConferenceRooms" );
-            HtmlOption option = select.getOptionByText( meeting.getRoom() );
-            select.setSelectedAttribute( option, true );
+        HtmlInput inputReason = form.getInputByName( "Title" );
+        inputReason.type( meeting.getReason() );
 
-            Date date = meeting.getDate();
-            if( date != null )
+        List< String > attendeesList = meeting.getAttendees();
+        if( attendeesList != null && attendeesList.size() > 0 )
+        {
+            HtmlSelect attendees = (HtmlSelect)page.getElementById( "AttendeesIds" );
+            for( String participant : attendeesList )
             {
-                HtmlTextInput startDate = form.getFirstByXPath( ".//*[@id='StartDate']" );
-                DateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy" );
-                startDate.setAttribute( "value", formatter.format( date ) );
+                attendees.getOptionByText( participant ).setSelected( true );
             }
-            HtmlInput inputStartTime = form.getInputByName( "StartTime" );
-            inputStartTime.setValueAttribute( meeting.getFromTime() );
+        }
+        logger.debug( "Page filled, clicking button" );
+        HtmlPage nextPage = button.click();
+        
+        String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( SHOW_MY_BOOKINGS ).toString();
+        if( !nextPage.getBaseURI().equals( pageUrl ) )
+        {
+            errorMessages.add( "Room already booked" );
+            logger.error( errorMessages );
+            throw new InvalidInputException( errorMessages );
+        }
 
-            HtmlInput inputEndTime = form.getInputByName( "EndTime" );
-            inputEndTime.setValueAttribute( meeting.getToTime() );
-
-            HtmlInput inputReason = form.getInputByName( "Title" );
-            inputReason.type( meeting.getReason() );
-
-            List< String > attendeesList = meeting.getAttendees();
-            if( attendeesList != null && attendeesList.size() > 0 )
+        // Error check
+        DomNodeList< DomElement > list = page.getElementsByTagName( "span" );
+        for( DomElement domElement : list )
+        {
+            if( domElement.getAttribute( "class" ).contains( "field-validation-error" ) )
             {
-                HtmlSelect attendees = (HtmlSelect)page.getElementById( "AttendeesIds" );
-                for( String participant : attendeesList )
-                {
-                    attendees.getOptionByText( participant ).setSelected( true );
-                }
+                errorMessages.add( domElement.getTextContent() );
             }
-            logger.debug("Page filled, clicking button");
-            button.click();
+        }
 
-            // Error check
-            DomNodeList< DomElement > list = page.getElementsByTagName( "span" );
-            for( DomElement domElement : list )
-            {
-                if( domElement.getAttribute( "class" ).contains( "field-validation-error" ) )
-                {
-                    errorMessages.add( domElement.getTextContent() );
-                }
-            }
-
-            if( errorMessages.size() > 0 )
-            {
-                throw new InvalidInputException( errorMessages );
-            }
+        if( errorMessages.size() > 0 )
+        {
+            logger.error( errorMessages );
+            throw new InvalidInputException( errorMessages );
         }
     }
 
@@ -129,20 +142,14 @@ public class Bookie
 
     private List< Meeting > getBooking( User user, String uri ) throws Exception
     {
-        final WebClient webClient = new WebClient();
-        webClient.getOptions().setCssEnabled( false );
-        webClient.getOptions().setJavaScriptEnabled( false );
-        addCredentials( user, webClient );
         List< Meeting > bookings = new ArrayList< Meeting >();
+        HtmlPage page = navigateToPage( user, uri, false );
 
-        String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( uri ).toString();
-        HtmlPage page = webClient.getPage( pageUrl );
-
-        logger.debug("Page loaded");
+        logger.debug( "Page loaded" );
         HtmlTable table = (HtmlTable)page.getByXPath( ".//*[@id='Grid']/table" ).get( 0 );
         List< HtmlTableRow > rows = table.getRows();
 
-        logger.debug("Retriving information for " + uri);
+        logger.debug( "Retriving information for " + uri );
         for( HtmlTableRow htmlTableRow : Iterables.skip( rows, 1 ) )
         {
             Meeting meeting = new Meeting();
@@ -178,28 +185,36 @@ public class Bookie
         return bookings;
     }
 
+    public void navigateToPage( User user, boolean enableJS ) throws Exception, IOException, MalformedURLException
+    {
+        navigateToPage( user, SHOW_MY_BOOKINGS ,enableJS );
+    }
+
+    private HtmlPage navigateToPage( User user, String uri, boolean enableJS ) throws Exception, IOException, MalformedURLException
+    {
+        final WebClient webClient = new WebClient();
+        webClient.getOptions().setCssEnabled( false );
+        webClient.getOptions().setJavaScriptEnabled( enableJS );
+        addCredentials( user, webClient );
+
+        String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( uri ).toString();
+        HtmlPage page = webClient.getPage( pageUrl );
+        return page;
+    }
+
     public void cancelBooking( User user, Meeting meeting ) throws Exception
     {
-        try ( final WebClient webClient = new WebClient() )
-        {
-            addCredentials( user, webClient );
+        final WebClient webClient = new WebClient();
+        addCredentials( user, webClient );
 
-            String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( CANCEL_BOOKING ).toString() + "/" + meeting.getMeetingId();
-            HtmlPage page = webClient.getPage( pageUrl );
+        String uri = CANCEL_BOOKING + "/" + meeting.getMeetingId();
+        String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( uri ).toString();
 
-            logger.debug("Page loaded");
-            HtmlForm form = page.getForms().get( 0 );
-            HtmlButton button = form.getFirstByXPath( ".//*[@id='CancelBooking']" );
+        URL url = new URL( pageUrl );
+        WebRequest requestSettings = new WebRequest( url, HttpMethod.POST );
 
-            logger.debug("Clicking Cancel booking");
-            button.click();
-            Thread.sleep( 1000 );
-
-            logger.debug("Confirming Cancellation");
-            HtmlButton confirmButton = (HtmlButton)page.getByXPath( "html/body/div[4]/div[3]/div/button[1]" ).get( 0 );
-            confirmButton.click();
-        }
-
+        Page redirectPage = webClient.getPage( requestSettings );
+        logger.debug( "Confirmed Cancellation " + redirectPage.getWebResponse().getContentAsString() );
     }
 
 
