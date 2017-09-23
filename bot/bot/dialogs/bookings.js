@@ -3,7 +3,7 @@ var logger = require('../../log4js').logger;
 var prorigoRest = require('../prorigoRest');
 var moment = require('moment');
 var roomLabel = require('./roomLabel');
-var userInfo = require('../index').userInfo;
+
 
 var lib = new builder.Library('booking');
 
@@ -174,6 +174,11 @@ function curateDataTypes(bookingInfo){
         var date = bookingInfo.bookingDates[i];
         bookingInfo.bookingDates[i] = moment(moment(date).format('YYYY-MM-DD'), 'YYYY-MM-DD');
     }
+}
+
+function userInfo(address){
+    return {userId : 'test', channelId: 'skype'};
+    // return {userId : address.user.id, channelId: address.channelId};
 }
 
 function createBookingSummary(session, bookingInfo){
