@@ -3,6 +3,7 @@ var logger = require('../../log4js').logger;
 var prorigoRest = require('../prorigoRest');
 var moment = require('moment');
 var roomLabel = require('./roomLabel');
+var userInfo = require('../index').userInfo;
 
 var lib = new builder.Library('booking');
 
@@ -116,26 +117,32 @@ lib.dialog('/bookRoom', [
         builder.Prompts.choice(session, "Are you sure you want to book " + message.data.text+ "?",["Yes", "No"], {listStyle: 3} );
         next();
     },
-        function(session, results){
-            if(results.response.entity == "Yes"){
-                var meetings = createBookingPostData(session.dialogData.bookingInfo);
-                for(var i = 0; i < meetings.length; i++){
-                    var runs = 0;
-                    prorigoRest.bookRoom(function(){
-                        session.send('room booked');
-                        runs++;
-                        if(runs == meetings.length){
-                            next();
-                        }
-                    }, function(err){
-                        session.send('error');
-                    }, {meeting: meetings[i], user: userInfo(session.message.address)});
-                }
+    function(session, results){
+        if(results.response.entity == "Yes"){
+            var meetings = createBookingPostData(session.dialogData.bookingInfo);
+            for(var i = 0; i < meetings.length; i++){
+                var runs = 0;
+                prorigoRest.bookRoom(function(){
+                    var msg = meetings[runs].room + ' booked successfully on ' + meetings[runs].date + ' from ' + meetings[runs].fromTime + ' to ' + meetings[runs].toTime;
+                    session.send(msg);
+                    runs++;
+                    if(runs == meetings.length){
+                        next();
+                    }
+                }, function(err){
+                    var msg = meetings[runs].room + ' booking unsuccessful: ' + meetings[runs].date + ' from ' + meetings[runs].fromTime + ' to ' + meetings[runs].toTime + '\n\n';
+                    msg += err.message;
+                    session.send(msg);
+                }, {meeting: meetings[i], user: userInfo(session.message.address)});
             }
-            }, function(session, results){
-                // session.dialogData.bookingInfo.
-                session.endDialog('All bookings completed!');
-            }
+            var msg = meetings[runs].room + ' booking unsuccessfull: ' + meetings[runs].date + ' from ' + meetings[runs].fromTime + ' to ' + meetings[runs].toTime + '\n\n';
+            msg += err.message;
+            session.send(msg);
+        }
+        }, function(session, results){
+            // session.dialogData.bookingInfo.
+            session.endDialog('All bookings completed!');
+        }
 ]).triggerAction({
     matches: 'BookRoom'
 });
@@ -310,10 +317,7 @@ function getBookingRoom(roomEntity){
     return room;
 }
 
-function userInfo(address){
-    return {userId : 'test', channelId: 'skype'};
-    // return {userId : address.user.id, channelId: address.channelId};
-}
+
 
 function numToTime(num) {
     var sec_num = parseInt(num, 10); // 2nd param is base

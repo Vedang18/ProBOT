@@ -2,6 +2,7 @@ var builder = require('botbuilder');
 var logger = require('../../log4js').logger;
 var prorigoRest = require('../prorigoRest');
 var dateFormat = require('dateformat');
+var userInfo = require('../index').userInfo;
 
 var lib = new builder.Library('holidays');
 lib.dialog('/', [function(session, args, next) {

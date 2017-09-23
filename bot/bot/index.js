@@ -139,8 +139,15 @@ function provideloginIfneeded(session) {
     session.endDialog(msg);
     }
 }
+
+function userInfo(address){
+    return {userId : 'test', channelId: 'skype'};
+    // return {userId : address.user.id, channelId: address.channelId};
+}
+
 module.exports = {
     listen: listen,
     beginDialog: beginDialog,
-    sendMessage: sendMessage
+    sendMessage: sendMessage,
+    userInfo: userInfo
 };
