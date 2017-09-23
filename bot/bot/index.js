@@ -125,9 +125,11 @@ function provideloginIfneeded(session) {
             "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
         var msg = new builder.Message(session)
             .attachments([
-                new builder.SigninCard(session)
-                    .text("You must first login to your account.")
-                    .button("signin", link)
+                new builder.HeroCard(session)
+                    .title("You must first login to your account.")
+                    .buttons([
+                        builder.CardAction.openUrl(session, link, "Sign-In")
+                    ])
             ]);
             session.send(msg);
             session.endDialog();
