@@ -14,6 +14,7 @@ var DialogLabels = {
     cancel_booking: 'Cancel room booking',
 };
 
+//TODO : give proper msg in Universal Bot also check the logic
 var bot = new builder.UniversalBot(connector, [
     function(session){
         var msg = session.message.text.toLowerCase();
@@ -28,16 +29,18 @@ var bot = new builder.UniversalBot(connector, [
     }
 ]);
 
-
 var luisAppUrl = process.env.LUIS_MODEL_URL;
 bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 
 bot.library(require('./dialogs/holidays').createLibrary());
 bot.library(require('./dialogs/bookings').createLibrary());
 
-var room = require('./book-room');
+bot.dialog('help',function(session){
+    session.endDialog('help_msg')
+}
+).triggerAction({matches:"help"})
 
-bot.dialog('bookrooms',room );
+var room = require('./book-room');
 
 bot.on('error', function (e) {
     console.log('And error ocurred', e);
