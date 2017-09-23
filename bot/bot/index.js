@@ -113,7 +113,6 @@ function sendMessage(message) {
     bot.send(message);
 }
 
-// TODO fix it properly
 function provideloginIfneeded(session) {
     var channelId = session.message.address.channelId;
     var userId = session.message.address.user.id;
