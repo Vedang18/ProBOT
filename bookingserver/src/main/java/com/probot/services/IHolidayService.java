@@ -13,6 +13,6 @@ public interface IHolidayService
 {
     List<Holidays> getHolidaysafter(Date date);
     List<Holidays> getAllHolidays();
-    List<Holidays> getHolidaysInMonth(String month);
+    List<Holidays> getHolidaysInBetween(Date startDate, Date endDate);
 }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.probot.entities.Holidays;
 
 /**
+ * Repository for fetching holidays related information
  * @author Vedang, Created on Sep 17, 2017
  *
  */
@@ -18,4 +19,8 @@ public interface HolidayRepository extends CrudRepository<Holidays, Integer>
 {
     @Query("SELECT h FROM Holidays h WHERE date > :date")
     Iterable<Holidays> findHolidaysafter(@Param("date") Date date);
+
+    Iterable<Holidays> findByDateBetweenOrderByDate(Date startDate, Date endDate);
+    
+    Iterable<Holidays> findAllByOrderByDateAsc();
 }

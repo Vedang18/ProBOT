@@ -98,7 +98,7 @@ public class Meeting
     
     @Override
 	public String toString() {
-		return "Meeting in " + room + " on " + date + " from " + fromTime + " to" + toTime
+		return "Meeting in " + room + " on " + date + " from " + fromTime + " to " + toTime
 				+ " for " + reason + " with " + attendees;
 	}
 }

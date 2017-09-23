@@ -9,6 +9,9 @@ import com.probot.entities.User;
 public interface IUserService
 {
 
-    User getUserByChannelId(String channelId);
-    void save(String channelId, String username, String password);
+    User getUserByChannelAndUserId(User user);
+    User getUserByUserName(String username);
+    User save(String channelId, String userId, String username, String password) throws Exception;
+    User save(User user) throws Exception;
+    void testLogin( User user ) throws Exception;
 }
