@@ -1,10 +1,9 @@
 {
     "cr1" : "Conference Room 1",
-    "cr2" : "Conference Room 2",
-    "cr3" : "Conference Room 3",
+    "cr3" : "Conference Room 3 (Jewelfie Lab)",
     "cr4" : "Conference Room 4",
     "mr1" : "Meeting Room 1",
     "mr2" : "Meeting Room 2",
     "mr3" : "Meeting Room 3",
-    "cr-bcn" : "Communication Area"
+    "cr-bcn" : "Communication Room (BCN Area)"
 }

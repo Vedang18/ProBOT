@@ -141,8 +141,27 @@ function findUserByChannelIdAndUserId(callback,errCallback,json) {
     }).catch(function(err){
         errCallback(err);
     });
+}
+
+function bookRoom(callback, errCallback, json){
+    var headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    };
+    fetch(prorigoRestEndpoint + '/api/room/book', {method: 'POST', body: JSON.stringify(json), headers: headers})
+    .then(function(response) {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server");
+        }
+        return response.json();
+    }).then(function(jsonResponse){
+        callback(jsonResponse);
+    }).catch(function(err){
+        errCallback(err);
+    });
 
 }
+
 module.exports = {
     getAllHolidays: getAllHolidays,
     getHolidays: getHolidays,
@@ -151,5 +170,7 @@ module.exports = {
     cancelBookings: cancelBookings,
     getMyBookings: getMyBookings ,
     saveUser:saveUser,
-    findUserByChannelIdAndUserId:findUserByChannelIdAndUserId
+    findUserByChannelIdAndUserId:findUserByChannelIdAndUserId,
+    bookRoom: bookRoom
+
 }

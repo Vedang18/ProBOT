@@ -2,6 +2,7 @@ var builder = require('botbuilder');
 var logger = require('../../log4js').logger;
 var prorigoRest = require('../prorigoRest');
 var moment = require('moment');
+var roomLabel = require('./roomLabel');
 
 var lib = new builder.Library('booking');
 
@@ -47,17 +48,17 @@ lib.dialog('/CancelBooking',[function(session,args,next){
                 session.dialogData.room_list = jsonBody;
             builder.Prompts.choice(session, "Which room do you want to cancel?", room_list, {listStyle: 3})
             }
-    }, function(err){
-        logger.error(err);
-        session.endDialog('something_went_wrong');
-    },userInfo(session.message.address));
-},function(session,results){
-    var meeting = session.dialogData.room_list[results.response.index];
-    session.dialogData.meeting = meeting;
-    var promptMsg1 = "Are you sure you want to cancel ";
-    var promptMsg2 = meeting.room +" on " + meeting.date + " from " + meeting.fromTime + " to " + meeting.toTime + " ?";
-    var promptMsg = promptMsg1 + promptMsg2;
-    builder.Prompts.choice(session,promptMsg,["Yes","No"], {listStyle : 3});
+        }, function(err){
+            logger.error(err);
+            session.endDialog('something_went_wrong');
+        },userInfo(session.message.address));
+    },function(session,results){
+        var meeting = session.dialogData.room_list[results.response.index];
+        session.dialogData.meeting = meeting;
+        var promptMsg1 = "Are you sure you want to cancel ";
+        var promptMsg2 = meeting.room +" on " + meeting.date + " from " + meeting.fromTime + " to " + meeting.toTime + " ?";
+        var promptMsg = promptMsg1 + promptMsg2;
+        builder.Prompts.choice(session,promptMsg,["Yes","No"], {listStyle : 3});
     },
     function(session, results){
         session.dialogData.ans = results.response.entity;
@@ -80,27 +81,55 @@ lib.dialog('/bookRoom', [
     function(session, args, next){
         session.sendTyping();
         var bookingInfo = parseBookingEntities(args.intent);
-        if(!bookingInfo.startTime || !bookingInfo.endTime || bookingInfo.bookingDates.length == 0){
+        if(!bookingInfo.bookingStartTime || !bookingInfo.bookingEndTime || bookingInfo.bookingDates.length == 0){
             session.endDialog('could_not_determine_booking_time');
+            return;
+        }
+        if(bookingInfo.bookingRoom){
+            bookingInfo.bookingRoom = roomLabel[bookingInfo.bookingRoom];
         }
         session.dialogData.bookingInfo = bookingInfo;
         next();
-    }, function(session, results){
+    }, function(session, results, next){
         if(!session.dialogData.bookingInfo.bookingRoom){
-            builder.Prompts.choice(session, 'Which room do you want to book?', ['Conf Room 4', 'Conf Room 1', 'Meeting room 3'], {listStyle : 3});
+            var rooms = []
+            for (var key in roomLabel) {
+                if (roomLabel.hasOwnProperty(key)) {
+                    rooms.push(roomLabel[key]);
+                }
+            }
+            builder.Prompts.choice(session, 'Which room do you want to book?', rooms, {listStyle : 3});
         }
-    },function(session, results){
-        session.dialogData.bookingInfo.bookingFromDate = results.response.entity;
-        if(!session.dialogData.bookingInfo.bookingPurpose){
-            builder.Prompts.text(session, 'Enter purpose of booking');
+        next();
+    },function(session, results, next){
+        if(results && results.response){
+            session.dialogData.bookingInfo.bookingRoom = results.response.entity;
+        }
+        builder.Prompts.text(session, 'Enter purpose of booking');
+    }, function(session, results, next){
+        session.dialogData.bookingInfo.bookingPurpose = results.response;
+        curateDataTypes(session.dialogData.bookingInfo);
+        var message = createBookingSummary(session, session.dialogData.bookingInfo);
+        session.send(message);
+        next();
+    }, function(session, results, next){
+        var meetings = createBookingPostData(session.dialogData.bookingInfo);
+        for(var i = 0; i < meetings.length; i++){
+            var runs = 0;
+            prorigoRest.bookRoom(function(){
+                session.send('room booked');
+                runs++;
+                if(runs == meetings.length){
+                    next();
+                }
+            }, function(err){
+                session.send('error');
+            }, {meeting: meetings[i], user: userInfo(session.message.address)});
         }
     }, function(session, results){
-        session.dialogData.bookingInfo.bookingPurpose = results.response.entity;
-        session.endDialog();
+        // session.dialogData.bookingInfo.
+        session.endDialog('All bookings completed!');
     }
-    // },function(session, results){
-    //     session.dialogData.bookingInfo.
-    // }
 ]).triggerAction({
     matches: 'BookRoom'
 });
@@ -108,6 +137,43 @@ lib.dialog('/bookRoom', [
 lib.dialog('/attendees', [
 
 ]);
+
+function createBookingPostData(bookingInfo){
+    var meetings = [];
+    for(var i = 0; i < bookingInfo.bookingDates.length; i++){
+        var date = bookingInfo.bookingDates[i];
+        var meeting = {};
+        meeting.attendees = [];
+        meeting.date = date.format('DD-MM-YYYY');
+        meeting.fromTime = bookingInfo.bookingStartTime.format('h:mm A');
+        meeting.toTime = bookingInfo.bookingEndTime.format('h:mm A');
+        meeting.reason = bookingInfo.bookingPurpose;
+        meeting.room = bookingInfo.bookingRoom;
+        meetings.push(meeting);
+    }
+    return meetings;
+}
+
+function curateDataTypes(bookingInfo){
+    bookingInfo.bookingStartTime = moment(moment(bookingInfo.bookingStartTime).format('HH:mm:ss'), 'HH:mm:ss');
+    bookingInfo.bookingEndTime = moment(moment(bookingInfo.bookingEndTime).format('HH:mm:ss'), 'HH:mm:ss');
+    for(var i = 0; i < bookingInfo.bookingDates.length; i++){
+        var date = bookingInfo.bookingDates[i];
+        bookingInfo.bookingDates[i] = moment(moment(date).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+    }
+}
+
+function createBookingSummary(session, bookingInfo){
+    var bookingSummaryText = '';
+    bookingSummaryText += '*' + bookingInfo.bookingRoom + '*' + '\n\n';
+    bookingSummaryText += bookingInfo.bookingStartTime.format('HH:mm') + ' to ' + bookingInfo.bookingEndTime.format('HH:mm') + ' on ' + '\n\n';
+    bookingInfo.bookingDates.forEach((date) => { bookingSummaryText += date.format('DD-MM-YYYY') + ','}) + '\n\n';
+    bookingSummaryText += "\n\n";
+    bookingSummaryText += bookingInfo.bookingPurpose;
+    var bookingSummaryMsg = new builder.Message(session);
+    bookingSummaryMsg.text(bookingSummaryText).textFormat('markdown');
+    return bookingSummaryMsg;
+}
 
 function createBookingMessage(session, bookingJson){
     var bookingMessageText = '';
@@ -151,6 +217,10 @@ function parseBookingEntities(intent){
         bookingRoom: bookingRoom
     }
 
+    // TODO: discard past dates & times
+    // TODO: discard if start time > end Time
+    // TODO: throw warning if dates.length > 5
+
     return bookingInfo;
 }
 
@@ -170,8 +240,11 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
         endTime = moment(end, 'YYYY-MM-DD HH:mm:ss');
         endTime = moment(endTime.format('HH:mm:ss'), 'HH:mm:ss');
         
-        var bookingDate = moment(start, 'YYYY-MM-DD HH:mm:ss');
-        bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
+        for(var i = 0; i < dateTimeRangeEntity.resolution.values.length; i++){
+            start = dateTimeRangeEntity.resolution.values[i].start;
+            var bookingDate = moment(start, 'YYYY-MM-DD HH:mm:ss');
+            bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
+        }
     } else{
         if(dateRangeEntity){
             // what about if there are more dateRangeEntities
@@ -218,7 +291,7 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
     }
 
     if(bookingDates.length == 0){
-        bookingDates.push(moment(moment(new Date()).format('YYYY-MM-DD')), 'YYYY-MM-DD'); 
+        bookingDates.push(moment(moment(new Date()).format('YYYY-MM-DD'), 'YYYY-MM-DD')); 
     }
     return [bookingDates, startTime, endTime];
 }
