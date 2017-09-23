@@ -4,7 +4,7 @@ require('isomorphic-fetch');
 
 var prorigoRestEndpoint = process.env.PRORIGO_REST_SERVER;
 function getAllHolidays(callback, errCallback){
-    fetch(prorigoRestEndpoint + '/api/holidays/all')
+    fetch(prorigoRestEndpoint + '/api/holidays/all', {method: 'POST'})
     .then(function(response) {
         if (response.status >= 400) {
             throw new Error("Bad response from server");
