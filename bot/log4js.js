@@ -1,4 +1,4 @@
-const log4js = require('log4js');
+var log4js = require('log4js');
 log4js.configure({
   appenders: { 
       fileappender: { type: 'file', filename: 'probot.log' },
@@ -7,7 +7,7 @@ log4js.configure({
   categories: { default: { appenders: ['fileappender', 'consoleappender'], level: 'debug' } }
 });
 
-const logger = log4js.getLogger('probot');
+var logger = log4js.getLogger('probot');
 module.exports = {
     logger: logger
 }
