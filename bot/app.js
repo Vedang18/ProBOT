@@ -36,10 +36,10 @@ app.post('/login', function (req, res) {
     var password = req.body.password;
 
     prorigoRest.saveUser(function (json) {
-        res.send(json);
+         res.status(200).send({"data":"User added"});
     },
         function (err) {
-            console.log(err);
+           res.status(500).send({"error":"Unauthorised"});
         },
         { 'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
 });

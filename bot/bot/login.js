@@ -15,8 +15,18 @@ $(function () {
             contentType: 'application/json',
             url: 'http://localhost:3978/login',
             success: function (data) {
-                alert(data);
+                if (data.responseText == "User added") {
+                    alert("User logged In sucessfully");
+                }
+                else {
+                    alert("Unauthorised Access");
+                }
+            },
+            error: function (err) {
+                if (error.responseText == "Unauthorised") {
+                    alert("Unauthorised Access");
+                }
             }
         });
-    });  
+    });
 });               

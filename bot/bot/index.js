@@ -16,9 +16,9 @@ var DialogLabels = {
 
 //TODO : give proper msg in Universal Bot also check the logic
 var bot = new builder.UniversalBot(connector, [
-    function(session){
+    function (session) {
         var msg = session.message.text.toLowerCase();
-        if(msg == '' ||msg == 'hi'){
+        if (msg == '' || msg == 'hi') {
             session.send('Hello ' + session.message.address.user.name);
             session.send('welcome_title');
             session.send('welcome_info');
@@ -35,10 +35,10 @@ bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 bot.library(require('./dialogs/holidays').createLibrary());
 bot.library(require('./dialogs/bookings').createLibrary());
 
-bot.dialog('help',function(session){
+bot.dialog('help', function (session) {
     session.endDialog('help_msg')
 }
-).triggerAction({matches:"help"})
+).triggerAction({ matches: "help" })
 
 var room = require('./book-room');
 
@@ -115,29 +115,26 @@ function sendMessage(message) {
 
 // TODO fix it properly
 function provideloginIfneeded(session) {
-    const channelId = session.message.address.channelId;
-    const userId = session.message.address.user.id;
-    prorigoRest.findUserByChannelIdAndUserId(function(json){
-        session.dialogData.userEntry = json;
+    var channelId = session.message.address.channelId;
+    var userId = session.message.address.user.id;
+    prorigoRest.findUserByChannelIdAndUserId(function (json) {
+        //session.userData.userEntry = json;
         session.endDialog();
-    }, function(err){
-        logger.error(err);
-        session.endDialog();
-    },{userId: 'test', channelId: 'skype' });
+    }, function (err) {
+        var link = util.format(
+            '%s/login?userId=%s&channelId=%s',
+            "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
+        var msg = new builder.Message(session)
+            .attachments([
+                new builder.SigninCard(session)
+                    .text("You must first login to your account.")
+                    .button("signin", link)
+            ]);
+            session.send(msg);
+            session.endDialog();
+    }, { userId: 'test', channelId: 'test' });
 
-    if(!session.dialogData.userEntry) {
-     const link = util.format(
-        '%s/login?userId=%s&channelId=%s',
-        "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
 
-    var msg = new builder.Message(session) 
-    .attachments([ 
-        new builder.SigninCard(session) 
-            .text("You must first login to your account.") 
-            .button("signin", link) 
-    ]); 
-    session.endDialog(msg);
-    }
 }
 
 function userInfo(address){
