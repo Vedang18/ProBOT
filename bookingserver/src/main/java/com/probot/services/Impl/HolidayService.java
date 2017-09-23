@@ -1,4 +1,4 @@
-package com.prorigo.services;
+package com.probot.services.Impl;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -8,8 +8,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.prorigo.entities.Holidays;
-import com.prorigo.repositories.HolidayRepository;
+import com.probot.entities.Holidays;
+import com.probot.repositories.HolidayRepository;
+import com.probot.services.IHolidayService;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
@@ -30,27 +31,18 @@ public class HolidayService implements IHolidayService
     }
 
     @Override
-    public List<Holidays> getHolidaysBetween(Date startDate, Date endDate) {
-        List<Holidays> holidays = new ArrayList<>();
-        holidayRepository.findByDateBetweenOrderByDate(startDate, endDate).forEach(e -> holidays.add(e));
-        return holidays;
-    }
-
-    @Override
     public List<Holidays> getAllHolidays()
     {
         List<Holidays> holidays = new ArrayList<>();
-        holidayRepository.findAllByOrderByDate().forEach(e -> holidays.add(e));
+        holidayRepository.findAllByOrderByDateAsc().forEach(e -> holidays.add(e));
         return holidays;
     }
 
     @Override
-    public List<Holidays> getHolidaysInMonth(String month)
+    public List<Holidays> getHolidaysInBetween(Date startDate, Date endDate)
     {
-        //FIXME ugly code
-        int m = Month.valueOf(month).getValue();
-        List<Holidays> holidays = getAllHolidays();
-        return holidays.subList(m / 2, (holidays.size() - 1));
+        List<Holidays> holidays = new ArrayList<>();
+        holidayRepository.findByDateBetweenOrderByDate(startDate,endDate).forEach(e -> holidays.add(e));
+        return holidays;
     }
-
 }

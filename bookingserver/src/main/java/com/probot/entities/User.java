@@ -1,19 +1,21 @@
-package com.prorigo.entities;
+package com.probot.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
  *
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints={@UniqueConstraint(columnNames = {"channelId" , "userId"})})
 public class User implements Serializable
 {
 
@@ -23,53 +25,66 @@ public class User implements Serializable
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int uid;
     private String channelId;
+    private String userId;
+    @Column(unique=true)
     private String username;
     private String password;
 
     public User()
     {
-	
+
     }
+
     public User(String channelId, String username, String password)
     {
-	this.channelId = channelId;
-	this.username = username;
-	this.password = password;
+        this.channelId = channelId;
+        this.username = username;
+        this.password = password;
     }
 
     public String getChannelId()
     {
-	return channelId;
+        return channelId;
     }
 
     public void setChannelId(String channelId)
     {
-	this.channelId = channelId;
+        this.channelId = channelId;
     }
 
     public String getUsername()
     {
-	return username;
+        return username;
     }
 
     public void setUsername(String username)
     {
-	this.username = username;
+        this.username = username;
     }
 
     public String getPassword()
     {
-	return password;
+        return password;
     }
 
     public void setPassword(String password)
     {
-	this.password = password;
+        this.password = password;
     }
 
     public int getUid()
     {
-	return uid;
+        return uid;
+    }
+
+    public String getUserId()
+    {
+        return userId;
+    }
+
+    public void setUserId(String userId)
+    {
+        this.userId = userId;
     }
 
 }
