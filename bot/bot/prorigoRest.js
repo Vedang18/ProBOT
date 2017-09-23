@@ -151,6 +151,10 @@ function bookRoom(callback, errCallback, json){
     fetch(prorigoRestEndpoint + '/api/room/book', {method: 'POST', body: JSON.stringify(json), headers: headers})
     .then(function(response) {
         if (response.status >= 400) {
+            if(response.headers._headers.errors){
+                var errMsg = response.headers._headers.errors[0];
+                throw new Error(errMsg);
+            }
             throw new Error("Bad response from server");
         }
         return response.json();
