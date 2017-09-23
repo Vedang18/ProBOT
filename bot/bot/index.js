@@ -132,7 +132,7 @@ function provideloginIfneeded(session) {
             ]);
             session.send(msg);
             session.endDialog();
-    }, { userId: 'test', channelId: 'test' });
+    }, { userId: userId, channelId: channelId });
 
 
 }
