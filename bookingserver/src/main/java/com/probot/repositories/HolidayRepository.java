@@ -1,4 +1,4 @@
-package com.prorigo.repositories;
+package com.probot.repositories;
 
 import java.util.Date;
 
@@ -7,9 +7,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.prorigo.entities.Holidays;
+import com.probot.entities.Holidays;
 
 /**
+ * Repository for fetching holidays related information
  * @author Vedang, Created on Sep 17, 2017
  *
  */
@@ -19,7 +20,7 @@ public interface HolidayRepository extends CrudRepository<Holidays, Integer>
     @Query("SELECT h FROM Holidays h WHERE date > :date")
     Iterable<Holidays> findHolidaysafter(@Param("date") Date date);
 
-    Iterable<Holidays> findAllByOrderByDate();
-
-    Iterable<Holidays> findByDateBetweenOrderByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    Iterable<Holidays> findByDateBetweenOrderByDate(Date startDate, Date endDate);
+    
+    Iterable<Holidays> findAllByOrderByDateAsc();
 }
