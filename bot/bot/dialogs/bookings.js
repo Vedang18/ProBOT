@@ -110,26 +110,32 @@ lib.dialog('/bookRoom', [
         session.dialogData.bookingInfo.bookingPurpose = results.response;
         curateDataTypes(session.dialogData.bookingInfo);
         var message = createBookingSummary(session, session.dialogData.bookingInfo);
-        session.send(message);
+        //session.send(message);
+        
+    //}, function(session, results, next){
+        builder.Prompts.choice(session, "Are you sure you want to book " + message.data.text+ "?",["Yes", "No"], {listStyle: 3} );
         next();
-    }, function(session, results, next){
-        var meetings = createBookingPostData(session.dialogData.bookingInfo);
-        for(var i = 0; i < meetings.length; i++){
-            var runs = 0;
-            prorigoRest.bookRoom(function(){
-                session.send('room booked');
-                runs++;
-                if(runs == meetings.length){
-                    next();
+    },
+        function(session, results){
+            if(results.response.entity == "Yes"){
+                var meetings = createBookingPostData(session.dialogData.bookingInfo);
+                for(var i = 0; i < meetings.length; i++){
+                    var runs = 0;
+                    prorigoRest.bookRoom(function(){
+                        session.send('room booked');
+                        runs++;
+                        if(runs == meetings.length){
+                            next();
+                        }
+                    }, function(err){
+                        session.send('error');
+                    }, {meeting: meetings[i], user: userInfo(session.message.address)});
                 }
-            }, function(err){
-                session.send('error');
-            }, {meeting: meetings[i], user: userInfo(session.message.address)});
-        }
-    }, function(session, results){
-        // session.dialogData.bookingInfo.
-        session.endDialog('All bookings completed!');
-    }
+            }
+            }, function(session, results){
+                // session.dialogData.bookingInfo.
+                session.endDialog('All bookings completed!');
+            }
 ]).triggerAction({
     matches: 'BookRoom'
 });
@@ -305,8 +311,8 @@ function getBookingRoom(roomEntity){
 }
 
 function userInfo(address){
-    //return {userId : 'test', channelId: 'skype'};
-    return {userId : address.user.id, channelId: address.channelId};
+    return {userId : 'test', channelId: 'skype'};
+    // return {userId : address.user.id, channelId: address.channelId};
 }
 
 function numToTime(num) {
