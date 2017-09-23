@@ -1,6 +1,7 @@
 var builder = require('botbuilder');
 var logger = require('../log4js').logger;
-
+var querystring = require('querystring');
+var util = require('util');
 var prorigoRest = require('./prorigoRest');
 
 var connector = new builder.ChatConnector({
@@ -13,61 +14,33 @@ var DialogLabels = {
     cancel_booking: 'Cancel room booking',
 };
 
+//TODO : give proper msg in Universal Bot also check the logic
 var bot = new builder.UniversalBot(connector, [
-    function(session){
+    function (session) {
         var msg = session.message.text.toLowerCase();
-        if(msg == '' ||msg == 'hi'){
+        if (msg == '' || msg == 'hi') {
+            session.send('Hello ' + session.message.address.user.name);
             session.send('welcome_title');
             session.send('welcome_info');
             session.send('Just type away your requests or queries');
+
+            provideloginIfneeded(session);
         }
     }
 ]);
 
-var luisAppUrl = process.env.LUIS_MODEL_URL
+var luisAppUrl = process.env.LUIS_MODEL_URL;
 bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
 
-bot.dialog('ShowHolidays', [
-    function(session, args, next){
-        session.sendTyping();
-        var intent = args.intent;
-        var duration = builder.EntityRecognizer.findEntity(intent.entities, 'builtin.datetimeV2.daterange');
-        logger.debug(duration);
-        if(duration == null){
-            prorigoRest.getAllHolidays(function(json){
-                var holidayMessage = createHolidayMessage(session, json);
-                session.send(holidayMessage);
-                session.endDialog();
-            }, function(err){
-                logger.error(err);
-                session.endDialog('something_went_wrong');
-            });
-        } else {
-            var actualDuration = duration.resolution.values[0];
-            var thisYear = new Date().getFullYear();
-            duration.resolution.values.forEach((val) =>{
-                if(val.start.startsWith(thisYear)){
-                    actualDuration = val;
-                }
-            })
-            prorigoRest.getHolidays(function(json){
-                var holidayMessage = createHolidayMessage(session, json);
-                session.send(holidayMessage);
-                session.endDialog();
-            },function(err){
-                logger.error(err);
-                session.endDialog('something_went_wrong');
-            }, {startDate : actualDuration.start, endDate: actualDuration.end});
-        }
-        
-    }
-]).triggerAction({
-    matches:'ShowHolidays'
-});
+bot.library(require('./dialogs/holidays').createLibrary());
+bot.library(require('./dialogs/bookings').createLibrary());
+
+bot.dialog('help', function (session) {
+    session.endDialog('help_msg')
+}
+).triggerAction({ matches: "help" })
 
 var room = require('./book-room');
-
-bot.dialog('bookrooms',room );
 
 bot.on('error', function (e) {
     console.log('And error ocurred', e);
@@ -81,8 +54,6 @@ bot.set('localizerSettings', {
     botLocalePath: './bot/locale',
     defaultLocale: 'en'
 });
-
-
 
 // Trigger secondary dialogs when 'settings' or 'support' is called
 bot.use({
@@ -142,19 +113,31 @@ function sendMessage(message) {
     bot.send(message);
 }
 
-function createHolidayMessage(session, holidayJson){
-    var holidayMessageText = '';
-    if(holidayJson.length == 0){
-        holidayMessageText = 'No holidays';
-    } else {
-        holidayJson.forEach(function(holiday){
-            holidayMessageText += '* ' + holiday.reason + ' on ' + holiday.date + '\n\n';
-        });
-    }
-    var holidayMessage = new builder.Message(session);
-    holidayMessage.text(holidayMessageText).textFormat('markdown');
-    return holidayMessage;
+// TODO fix it properly
+function provideloginIfneeded(session) {
+    var channelId = session.message.address.channelId;
+    var userId = session.message.address.user.id;
+    prorigoRest.findUserByChannelIdAndUserId(function (json) {
+        //session.userData.userEntry = json;
+        session.endDialog();
+    }, function (err) {
+        var link = util.format(
+            '%s/login?userId=%s&channelId=%s',
+            "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
+        var msg = new builder.Message(session)
+            .attachments([
+                new builder.SigninCard(session)
+                    .text("You must first login to your account.")
+                    .button("signin", link)
+            ]);
+            session.send(msg);
+            session.endDialog();
+    }, { userId: userId, channelId: channelId });
+
+
 }
+
+
 
 module.exports = {
     listen: listen,

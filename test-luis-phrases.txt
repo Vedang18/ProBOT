@@ -1,0 +1,745 @@
+book room from 4 : 00 for 1 hour tomorrow
+book room from [$datetimeV2 ] for [$datetimeV2 ] [$datetimeV2 ]
+
+{
+  "query": "book room from 4:00 for 1 hour tomorrow",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 1.0
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 1.0
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.00353590213
+    },
+    {
+      "intent": "None",
+      "score": 0.00341425743
+    },
+    {
+      "intent": "Greetings",
+      "score": 5.46015253E-05
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 6.375418E-07
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 5.549367E-08
+    },
+    {
+      "intent": "help",
+      "score": 1.55690412E-08
+    }
+  ],
+  "entities": [
+    {
+      "entity": "tomorrow",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 31,
+      "endIndex": 38,
+      "resolution": {
+        "values": [
+          {
+            "timex": "2017-09-22",
+            "type": "date",
+            "value": "2017-09-22"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "4:00",
+      "type": "builtin.datetimeV2.time",
+      "startIndex": 15,
+      "endIndex": 18,
+      "resolution": {
+        "values": [
+          {
+            "timex": "T04:00",
+            "type": "time",
+            "value": "04:00:00"
+          },
+          {
+            "timex": "T16:00",
+            "type": "time",
+            "value": "16:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "1 hour",
+      "type": "builtin.datetimeV2.duration",
+      "startIndex": 24,
+      "endIndex": 29,
+      "resolution": {
+        "values": [
+          {
+            "timex": "PT1H",
+            "type": "duration",
+            "value": "3600"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+
+book cr1 from 4 : 00 for 3 hours
+book [$room ] from [$datetimeV2 ] for [$datetimeV2 ]
+
+{
+  "query": "book cr1 from 4:00 for 3 hours",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.999999046
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.999999046
+    },
+    {
+      "intent": "None",
+      "score": 0.00833745
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.00417471863
+    },
+    {
+      "intent": "Greetings",
+      "score": 7.308554E-05
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 1.25452834E-06
+    },
+    {
+      "intent": "help",
+      "score": 2.13317222E-08
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 1.77001414E-09
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "4:00",
+      "type": "builtin.datetimeV2.time",
+      "startIndex": 14,
+      "endIndex": 17,
+      "resolution": {
+        "values": [
+          {
+            "timex": "T04:00",
+            "type": "time",
+            "value": "04:00:00"
+          },
+          {
+            "timex": "T16:00",
+            "type": "time",
+            "value": "16:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "3 hours",
+      "type": "builtin.datetimeV2.duration",
+      "startIndex": 23,
+      "endIndex": 29,
+      "resolution": {
+        "values": [
+          {
+            "timex": "PT3H",
+            "type": "duration",
+            "value": "10800"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+
+book cr1 from 4pm to 5pm
+book [$room ] [$datetimeV2 ]
+
+{
+  "query": "book cr1 from 4pm to 5pm",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.9949737
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.9949737
+    },
+    {
+      "intent": "None",
+      "score": 0.0125622144
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.009463684
+    },
+    {
+      "intent": "Greetings",
+      "score": 0.0007471009
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 1.43346256E-06
+    },
+    {
+      "intent": "help",
+      "score": 2.856489E-07
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 1.40409027E-08
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "from 4pm to 5pm",
+      "type": "builtin.datetimeV2.timerange",
+      "startIndex": 9,
+      "endIndex": 23,
+      "resolution": {
+        "values": [
+          {
+            "timex": "(T16,T17,PT1H)",
+            "type": "timerange",
+            "start": "16:00:00",
+            "end": "17:00:00"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+
+book cr1 from 4 : 00 for 2 hours " today & tomorrow "
+book [$room ] from [$datetimeV2 ] for [$datetimeV2 ] " [$datetimeV2 ] & [$datetimeV2 ] "
+
+{
+  "query": "book cr1 from 4 : 00 for 2 hours \" today & tomorrow \"",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.999998569
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.999998569
+    },
+    {
+      "intent": "None",
+      "score": 0.00617099646
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.004694725
+    },
+    {
+      "intent": "Greetings",
+      "score": 7.64696051E-06
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 7.256991E-07
+    },
+    {
+      "intent": "help",
+      "score": 7.838152E-09
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 1.21404575E-09
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "today",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 35,
+      "endIndex": 39,
+      "resolution": {
+        "values": [
+          {
+            "timex": "2017-09-21",
+            "type": "date",
+            "value": "2017-09-21"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "tomorrow",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 43,
+      "endIndex": 50,
+      "resolution": {
+        "values": [
+          {
+            "timex": "2017-09-22",
+            "type": "date",
+            "value": "2017-09-22"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "4 : 00",
+      "type": "builtin.datetimeV2.time",
+      "startIndex": 14,
+      "endIndex": 19,
+      "resolution": {
+        "values": [
+          {
+            "timex": "T04:00",
+            "type": "time",
+            "value": "04:00:00"
+          },
+          {
+            "timex": "T16:00",
+            "type": "time",
+            "value": "16:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "2 hours",
+      "type": "builtin.datetimeV2.duration",
+      "startIndex": 25,
+      "endIndex": 31,
+      "resolution": {
+        "values": [
+          {
+            "timex": "PT2H",
+            "type": "duration",
+            "value": "7200"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+book cr1 from 4 : 00 to 5 : 00 for " today & tomorrow "
+book [$room ] [$datetimeV2 ] for " [$datetimeV2 ] & [$datetimeV2 ] "
+
+{
+  "query": "book cr1 from 4 : 00 to 5 : 00 for \" today & tomorrow \"",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.9999995
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.9999995
+    },
+    {
+      "intent": "None",
+      "score": 0.005569555
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.00457114354
+    },
+    {
+      "intent": "Greetings",
+      "score": 3.75556647E-06
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 5.839209E-07
+    },
+    {
+      "intent": "help",
+      "score": 5.163705E-09
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 8.983509E-10
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "today",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 37,
+      "endIndex": 41,
+      "resolution": {
+        "values": [
+          {
+            "timex": "2017-09-21",
+            "type": "date",
+            "value": "2017-09-21"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "tomorrow",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 45,
+      "endIndex": 52,
+      "resolution": {
+        "values": [
+          {
+            "timex": "2017-09-22",
+            "type": "date",
+            "value": "2017-09-22"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "from 4 : 00 to 5 : 00",
+      "type": "builtin.datetimeV2.timerange",
+      "startIndex": 9,
+      "endIndex": 29,
+      "resolution": {
+        "values": [
+          {
+            "timex": "(T04:00,T05:00,PT1H)",
+            "type": "timerange",
+            "start": "04:00:00",
+            "end": "05:00:00"
+          },
+          {
+            "timex": "(T16:00,T17:00,PT1H)",
+            "type": "timerange",
+            "start": "16:00:00",
+            "end": "17:00:00"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+book cr1 from 4 : 00 to 5 : 00 pm on next monday
+book [$room ] [$datetimeV2 ]
+
+{
+  "query": "book cr1 from 4:00 to 5:00 pm on next monday",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.999999046
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.999999046
+    },
+    {
+      "intent": "None",
+      "score": 0.006627648
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.005685379
+    },
+    {
+      "intent": "Greetings",
+      "score": 8.18885E-06
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 3.08696372E-07
+    },
+    {
+      "intent": "help",
+      "score": 9.985741E-09
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 1.59330227E-09
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "from 4:00 to 5:00 pm on next monday",
+      "type": "builtin.datetimeV2.datetimerange",
+      "startIndex": 9,
+      "endIndex": 43,
+      "resolution": {
+        "values": [
+          {
+            "timex": "(2017-09-25T04:00,2017-09-25T17:00,PT13H)",
+            "type": "datetimerange",
+            "start": "2017-09-25 04:00:00",
+            "end": "2017-09-25 17:00:00"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+book cr1 from 4 : 00 to 5 : 00 pm on " monday , tuesday "
+book [$room ] [$datetimeV2 ] on " [$datetimeV2 ] , [$datetimeV2 ] "
+
+{
+  "query": "book cr1 from 4 : 00 to 5 : 00 pm on \"monday, tuesday\"",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.9999981
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.9999981
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.006160812
+    },
+    {
+      "intent": "None",
+      "score": 0.005861309
+    },
+    {
+      "intent": "Greetings",
+      "score": 2.97658653E-06
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 3.11714444E-07
+    },
+    {
+      "intent": "help",
+      "score": 6.65928823E-09
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 1.75017045E-09
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "monday",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 38,
+      "endIndex": 43,
+      "resolution": {
+        "values": [
+          {
+            "timex": "XXXX-WXX-1",
+            "type": "date",
+            "value": "2017-09-18"
+          },
+          {
+            "timex": "XXXX-WXX-1",
+            "type": "date",
+            "value": "2017-09-25"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "tuesday",
+      "type": "builtin.datetimeV2.date",
+      "startIndex": 46,
+      "endIndex": 52,
+      "resolution": {
+        "values": [
+          {
+            "timex": "XXXX-WXX-2",
+            "type": "date",
+            "value": "2017-09-19"
+          },
+          {
+            "timex": "XXXX-WXX-2",
+            "type": "date",
+            "value": "2017-09-26"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "from 4 : 00 to 5 : 00 pm",
+      "type": "builtin.datetimeV2.timerange",
+      "startIndex": 9,
+      "endIndex": 32,
+      "resolution": {
+        "values": [
+          {
+            "timex": "(T04:00,T17:00,PT13H)",
+            "type": "timerange",
+            "start": "04:00:00",
+            "end": "17:00:00"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+book cr1 from 2 to 3 pm for next 2 days
+book [cr1 ] [from 2 to 3 pm ] for [next 2 days ]
+book [$room ] [$datetimeV2 ] for [$datetimeV2 ]
+{
+  "query": "book cr1 from 2 to 3 pm for next 2 days",
+  "topScoringIntent": {
+    "intent": "BookRoom",
+    "score": 0.999959469
+  },
+  "intents": [
+    {
+      "intent": "BookRoom",
+      "score": 0.999959469
+    },
+    {
+      "intent": "None",
+      "score": 0.008238344
+    },
+    {
+      "intent": "ShowBookingStatus",
+      "score": 0.00521138124
+    },
+    {
+      "intent": "Greetings",
+      "score": 2.57180018E-05
+    },
+    {
+      "intent": "ShowHolidays",
+      "score": 1.37908137E-06
+    },
+    {
+      "intent": "help",
+      "score": 1.96241725E-08
+    },
+    {
+      "intent": "CancelRoom",
+      "score": 1.78767723E-09
+    }
+  ],
+  "entities": [
+    {
+      "entity": "cr1",
+      "type": "room",
+      "startIndex": 5,
+      "endIndex": 7,
+      "resolution": {
+        "values": [
+          "cr1"
+        ]
+      }
+    },
+    {
+      "entity": "from 2 to 3 pm",
+      "type": "builtin.datetimeV2.timerange",
+      "startIndex": 9,
+      "endIndex": 22,
+      "resolution": {
+        "values": [
+          {
+            "timex": "(T14,T15,PT1H)",
+            "type": "timerange",
+            "start": "14:00:00",
+            "end": "15:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "entity": "next 2 days",
+      "type": "builtin.datetimeV2.daterange",
+      "startIndex": 28,
+      "endIndex": 38,
+      "resolution": {
+        "values": [
+          {
+            "timex": "(2017-09-22,2017-09-24,P2D)",
+            "type": "daterange",
+            "start": "2017-09-22",
+            "end": "2017-09-24"
+          }
+        ]
+      }
+    }
+  ]
+}
