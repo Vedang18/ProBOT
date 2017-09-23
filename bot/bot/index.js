@@ -36,7 +36,7 @@ bot.library(require('./dialogs/holidays').createLibrary());
 bot.library(require('./dialogs/bookings').createLibrary());
 
 bot.dialog('help', function (session) {
-    session.endDialog('help_msg')
+    session.endDialog("I can help you in: \n1. Room Booking \n2. Cancel Booking \n3. Show Bookings \n4. Show Holidays")
 }
 ).triggerAction({ matches: "help" })
 
