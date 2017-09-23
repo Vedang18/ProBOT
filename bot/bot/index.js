@@ -9,6 +9,8 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
+var appUrl = process.env.APP_URL;
+
 var DialogLabels = {
     book_room: 'Book a room',
     cancel_booking: 'Cancel room booking',
@@ -122,8 +124,9 @@ function provideloginIfneeded(session) {
         session.endDialog();
     }, function (err) {
         var link = util.format(
+            
             '%s/login?userId=%s&channelId=%s',
-            "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
+            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId));
         var msg = new builder.Message(session)
             .attachments([
                 new builder.SigninCard(session)

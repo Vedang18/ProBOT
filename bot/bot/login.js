@@ -13,7 +13,7 @@ $(function () {
             type: 'POST',
             data: JSON.stringify(data),
             contentType: 'application/json',
-            url: 'http://localhost:3978/login',
+            url: appUrl + '/login',
             success: function (data) {
                 if (data.responseText == "User added") {
                     alert("User logged In sucessfully");
