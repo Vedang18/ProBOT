@@ -1,5 +1,7 @@
 // This loads the environment variables from the .env file
 require('dotenv-extended').load();
+var logger = require('./log4js').logger;
+var moment = require('moment');
 
 var express = require('express');
 var path = require('path');
@@ -77,4 +79,5 @@ app.post('/login', function (req, res) {
     var port = process.env.port || process.env.PORT || 3978;
     app.listen(port, function () {
         console.log('Web Server listening on port %s', port);
+        logger.debug('Server started on: ' + moment().format('YYYY-MM-DD hh:mm:ss A Z'));
     });

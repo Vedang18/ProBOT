@@ -13,7 +13,12 @@ var appUrl = process.env.APP_URL;
 
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        provideloginIfneeded(session);
+        var msg = session.message.text.trim().toLowerCase();
+        if(msg == 'hi' || msg == 'hello'){
+            provideloginIfneeded(session);
+        } else {
+            session.send('Sorry! I could not understand you.');
+        }
     }
 ]);
 
@@ -123,6 +128,7 @@ function provideloginIfneeded(session) {
     var userId = session.message.address.user.id;
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         //session.userData.userEntry = json;
+        session.send('How can I help?');
         session.endDialog();
     }, function (err) {
         var userName = session.message.address.user.name;
