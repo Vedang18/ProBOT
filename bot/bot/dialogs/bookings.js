@@ -198,8 +198,9 @@ function createBookingMessage(session, bookingJson) {
         bookingMessageText = 'No bookings';
     } else {
         bookingJson.forEach(function (booking) {
-            bookingMessageText += booking.room + ' on ' + booking.date + ' from '
-                + booking.fromTime + ' to ' + booking.toTime + ' for ' + booking.reason + ' with ' + booking.attendees + '\n\n';
+            bookingMessageText += '*  **' + booking.room + '** on ' + booking.date + ' from '
+                + booking.fromTime + ' to ' + booking.toTime + ' for ' + booking.reason 
+                + ' with ' + booking.attendees + '\n\n';
         });
     }
 
