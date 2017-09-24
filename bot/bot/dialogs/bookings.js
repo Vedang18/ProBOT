@@ -181,8 +181,8 @@ function userInfo(address) {
 
 function createBookingSummary(session, bookingInfo) {
     var bookingSummaryText = '';
-    bookingSummaryText += '*' + bookingInfo.bookingRoom + '*' + '\n\n';
-    bookingSummaryText += bookingInfo.bookingStartTime.format('HH:mm') + ' to ' + bookingInfo.bookingEndTime.format('HH:mm') + ' on ' + '\n\n';
+    bookingSummaryText += '**' + bookingInfo.bookingRoom + '**' + '\n\n';
+    bookingSummaryText += bookingInfo.bookingStartTime.format('hh:mm A') + ' to ' + bookingInfo.bookingEndTime.format('hh:mm A') + ' on ' + '\n\n';
     bookingInfo.bookingDates.forEach((date) => { bookingSummaryText += date.format('DD-MM-YYYY') + ',' }) + '\n\n';
     bookingSummaryText += "\n\n";
     bookingSummaryText += bookingInfo.bookingPurpose;

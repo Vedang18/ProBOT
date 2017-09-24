@@ -61,7 +61,7 @@ function createHolidayMessage(session, holidayJson){
         holidayMessageText = 'No holidays';
     } else {
         holidayJson.forEach(function(holiday){
-            holidayMessageText += '* ' + holiday.reason + ' on ' + holiday.date + '\n\n';
+            holidayMessageText += '* **' + holiday.reason + '** on ' + holiday.date + '\n\n';
         });
     }
     var holidayMessage = new builder.Message(session);
