@@ -179,7 +179,7 @@ function createBookingPostData(bookingInfo) {
         meeting.date = date.format('DD-MM-YYYY');
         meeting.fromTime = bookingInfo.bookingStartTime.format('h:mm A');
         meeting.toTime = bookingInfo.bookingEndTime.format('h:mm A');
-        meeting.reason = bookingInfo.bookingPurpose;
+        meeting.reason = bookingInfo.bookingPurpose + ' - By ProBOT';
         meeting.room = bookingInfo.bookingRoom;
         meetings.push(meeting);
     }
