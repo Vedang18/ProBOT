@@ -40,7 +40,8 @@ lib.dialog('/CancelBooking', [function (session, args, next) {
     prorigoRest.getMyBookings(function (jsonBody) {
         if (jsonBody.length == 0) {
             var showBookingsMessage = "You have no reserved room"
-            session.send(showBookingsMessage)
+            session.send(showBookingsMessage);
+            session.endDialog();
         } else {
             var room_list = [];
             for (var i = 0; i < jsonBody.length; i++) {
