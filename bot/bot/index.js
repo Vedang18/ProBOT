@@ -32,7 +32,10 @@ bot.dialog('help', function (session) {
 ).triggerAction({ matches: "help" })
 
 bot.dialog('greetings', function(session){
-    session.say("Hello, How can I help you?","Hello, How can I help you?");
+    var userName = session.message.address.user.name;
+    var welcomeMessageText = 'Hello'
+    welcomeMessageText += userName ? ' **' + userName + '**' : '';
+    session.say(welcomeMessageText + ", How can I help you?","Hello, How can I help you?");
 }).triggerAction({matches: "Greetings"})
 
 
@@ -121,8 +124,13 @@ function provideloginIfneeded(session) {
         //session.userData.userEntry = json;
         session.endDialog();
     }, function (err) {
-        var welcomeInfo= "I am here to help you with your day to day tasks. I can book rooms, show holidays, and more.\n Just type away your requests or queries.";
-        session.send('Hello ' + session.message.address.user.name + ', I am ProBOT\n' + welcomeInfo );
+        var userName = session.message.address.user.name;
+        var welcomeMessageText = 'Hello'
+        welcomeMessageText += userName ? ' **' + userName + '**' : '';
+        welcomeMessageText += ', I am **ProBOT**';
+        var welcomeMessage = new builder.Message(session);
+        welcomeMessage.text(welcomeMessageText).textFormat('markdown');
+        session.send(welcomeMessage);
 
         var link = util.format(      
             '%s/login?userId=%s&channelId=%s',
