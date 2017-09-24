@@ -1,4 +1,8 @@
 {
     "something_went_wrong": "Something went wrong while contacting server. We are sorry for the inconvinience.",
-    "could_not_determine_booking_time": "I could not determine booking details properly."
+    "could_not_determine_booking_time": "I could not determine booking details properly.",
+    "book_room_cancel_confirmation": "This will cancel the current booking operation. Are you sure?",
+    "booking_creation_stop": "Room booking operation has been cancelled.",
+    "room_cancellation_confirmation": "This will cancel the current room cancellation operation. Are you sure?",
+    "room_cancellation_stop": "Cancel booking operation has been cancelled."
 }

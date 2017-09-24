@@ -74,7 +74,11 @@ function (session, results) {
     }
 }
 ]).triggerAction({
-    matches: 'CancelRoom'
+    matches: 'CancelRoom',
+    confirmPrompt: 'room_cancellation_confirmation'
+}).cancelAction('cancelCancelRoom', 'room_cancellation_stop', {
+    matches: /^(cancel|nevermind)$/i,
+    confirmPrompt: 'room_cancellation_confirmation'
 });
 
 
@@ -142,7 +146,11 @@ lib.dialog('/bookRoom', [
         session.endDialog('All bookings completed!');
     }
 ]).triggerAction({
-    matches: 'BookRoom'
+    matches: 'BookRoom',
+    confirmPrompt: 'book_room_cancel_confirmation'
+}).cancelAction('cancelRoomBooking', 'booking_creation_stop', {
+    matches: /^(cancel|nevermind)/i,
+    confirmPrompt: 'book_room_cancel_confirmation'
 });
 
 lib.dialog('/attendees', [
