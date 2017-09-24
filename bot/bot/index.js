@@ -13,7 +13,12 @@ var appUrl = process.env.APP_URL;
 
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        provideloginIfneeded(session);
+        var msg = session.message.text.trim().toLowerCase();
+        if(msg == '' || msg == 'hi' || msg == 'hello'){
+            provideloginIfneeded(session);
+        } else {
+            session.send('Sorry! I could not understand you.');
+        }
     }
 ]);
 
@@ -36,7 +41,8 @@ bot.dialog('greetings', function(session){
     var welcomeMessageText = 'Hello'
     welcomeMessageText += userName ? ' **' + userName + '**' : '';
     session.say(welcomeMessageText + ", How can I help you?","Hello, How can I help you?");
-}).triggerAction({matches: "Greetings"})
+})
+// .triggerAction({matches: "Greetings"})
 
 
 bot.on('error', function (e) {
@@ -120,13 +126,14 @@ function provideloginIfneeded(session) {
     session.sendTyping();
     var channelId = session.message.address.channelId;
     var userId = session.message.address.user.id;
+    var userName = session.message.address.user.name;
+    var welcomeMessageText = 'Hello'
+    welcomeMessageText += userName ? ' **' + userName + '**' : '';
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         //session.userData.userEntry = json;
+        session.send(welcomeMessageText + ', How can I help?');
         session.endDialog();
     }, function (err) {
-        var userName = session.message.address.user.name;
-        var welcomeMessageText = 'Hello'
-        welcomeMessageText += userName ? ' **' + userName + '**' : '';
         welcomeMessageText += ', I am **ProBOT**';
         var welcomeMessage = new builder.Message(session);
         welcomeMessage.text(welcomeMessageText).textFormat('markdown');
