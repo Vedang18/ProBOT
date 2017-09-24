@@ -29,7 +29,19 @@
   ],
   "entities": [
     {
+      "name": "myBooking"
+    },
+    {
+      "name": "phone"
+    },
+    {
+      "name": "projector"
+    },
+    {
       "name": "purpose"
+    },
+    {
+      "name": "roomCapacity"
     }
   ],
   "composites": [],
@@ -126,7 +138,8 @@
             "meeting-room-1",
             "meeting room-1",
             "meeting-room 1",
-            "meeting room1"
+            "meeting room1",
+            "mr 1"
           ]
         },
         {
@@ -138,7 +151,8 @@
             "MR-2",
             "mr2",
             "meeting-room 2",
-            "meeting room2"
+            "meeting room2",
+            "mr 2"
           ]
         },
         {
@@ -150,13 +164,20 @@
             "meeting room-3",
             "mr-3",
             "mr3",
-            "meeting room3"
+            "meeting room3",
+            "mr 3"
           ]
         },
         {
           "canonicalForm": "cr-bcn",
           "list": [
-            "communication room(bcn area)"
+            "communication room(bcn area)",
+            "bcn area",
+            "training room",
+            "bcn room",
+            "com room",
+            "comm-bcn",
+            "com bcn"
           ]
         }
       ]
@@ -166,14 +187,7 @@
     "datetimeV2"
   ],
   "actions": [],
-  "model_features": [
-    {
-      "name": "Names",
-      "mode": true,
-      "words": "suzanne,komal,vedang,abhishek",
-      "activated": true
-    }
-  ],
+  "model_features": [],
   "regex_features": [],
   "utterances": [
     {
@@ -184,6 +198,11 @@
     {
       "text": "hi",
       "intent": "Greetings",
+      "entities": []
+    },
+    {
+      "text": "who are you",
+      "intent": "help",
       "entities": []
     },
     {
@@ -202,8 +221,107 @@
       "entities": []
     },
     {
+      "text": "help me please",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "show weather",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "gm",
       "intent": "Greetings",
+      "entities": []
+    },
+    {
+      "text": "cancel booking",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "tell me something",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "show my bookings",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 5,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "show my booking",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 5,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "show me bookings",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "current news",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "cancel my booking",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "book room for 4",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "about yourself",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "show me some news",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "do not open this",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "show my bookings for today",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 5,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "show me booking",
+      "intent": "ShowBookingStatus",
       "entities": []
     },
     {
@@ -250,6 +368,17 @@
       "text": "show me the holidays for this year",
       "intent": "ShowHolidays",
       "entities": []
+    },
+    {
+      "text": "book room with projector",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "projector",
+          "startPos": 15,
+          "endPos": 23
+        }
+      ]
     },
     {
       "text": "i want to reserve conf room 1",
@@ -474,6 +603,505 @@
           "endPos": 51
         }
       ]
+    },
+    {
+      "text": "show holidays from 1st sep to 1st oct",
+      "intent": "ShowHolidays",
+      "entities": []
+    },
+    {
+      "text": "book conf1 for call with sam",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book cr1 for call with vedang",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 13,
+          "endPos": 28
+        }
+      ]
+    },
+    {
+      "text": "show all bookings",
+      "intent": "ShowBookingStatus",
+      "entities": []
+    },
+    {
+      "text": "for next 2 days book mr2 from 3pm to 4pm for \"appraisal meeting\"",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 45,
+          "endPos": 63
+        }
+      ]
+    },
+    {
+      "text": "for \"meeting\" book cr4 from 2pm to 3pm",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 4,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "book cr4 4pm to 5pm for \"scrum\" \"tomorrow\"",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 24,
+          "endPos": 30
+        }
+      ]
+    },
+    {
+      "text": "book cr1 from 4pm to 5pm for \"demo\"",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "purpose",
+          "startPos": 29,
+          "endPos": 34
+        }
+      ]
+    },
+    {
+      "text": "book cr1 from 4pm to 5pm for \"today & tomorrow\"",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "book cr1 from 4pm to 5pm for next 2 days",
+      "intent": "BookRoom",
+      "entities": []
+    },
+    {
+      "text": "which rooms have i booked?",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 17,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "what rooms have i booked?",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 16,
+          "endPos": 23
+        }
+      ]
+    },
+    {
+      "text": "which rooms are booked by me ?",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 16,
+          "endPos": 27
+        }
+      ]
+    },
+    {
+      "text": "what rooms did i book?",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 15,
+          "endPos": 20
+        }
+      ]
+    },
+    {
+      "text": "show my booked rooms",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 5,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "show holidays after 1st sept",
+      "intent": "ShowHolidays",
+      "entities": []
+    },
+    {
+      "text": "show holidays before 1st nov",
+      "intent": "ShowHolidays",
+      "entities": []
+    },
+    {
+      "text": "holidays before 1st dec",
+      "intent": "ShowHolidays",
+      "entities": []
+    },
+    {
+      "text": "can you show weather",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "tell me what to write",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "show me tickets to pune",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "show wather",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "book movy tickets",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "hey .. help me",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "i want to book a room with projector and capacity of 4 people",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 53,
+          "endPos": 53
+        },
+        {
+          "entity": "projector",
+          "startPos": 27,
+          "endPos": 35
+        }
+      ]
+    },
+    {
+      "text": "book room for 12 people with projector",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 22
+        },
+        {
+          "entity": "projector",
+          "startPos": 29,
+          "endPos": 37
+        }
+      ]
+    },
+    {
+      "text": "book room for 6 people",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "book room for 4 people with projector",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 21
+        },
+        {
+          "entity": "projector",
+          "startPos": 28,
+          "endPos": 36
+        }
+      ]
+    },
+    {
+      "text": "book room having projector and capacity of 6 person",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 43,
+          "endPos": 50
+        },
+        {
+          "entity": "projector",
+          "startPos": 17,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "book room for 7 attendees",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "show my bookngs",
+      "intent": "ShowBookingStatus",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 5,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "book room for 12",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "book room for 15",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "book room having projector and capacity of 8",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 31,
+          "endPos": 43
+        },
+        {
+          "entity": "projector",
+          "startPos": 17,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "book room for 5 at 6 for 3 hours",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "book room having phone",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 17,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "book room for a call",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 16,
+          "endPos": 19
+        }
+      ]
+    },
+    {
+      "text": "book room with phone and projector",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 15,
+          "endPos": 19
+        },
+        {
+          "entity": "projector",
+          "startPos": 25,
+          "endPos": 33
+        }
+      ]
+    },
+    {
+      "text": "book room with phone and projector for 6 people",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 15,
+          "endPos": 19
+        },
+        {
+          "entity": "roomCapacity",
+          "startPos": 39,
+          "endPos": 46
+        },
+        {
+          "entity": "projector",
+          "startPos": 25,
+          "endPos": 33
+        }
+      ]
+    },
+    {
+      "text": "book room with projector and phone for 8 people",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 29,
+          "endPos": 33
+        },
+        {
+          "entity": "roomCapacity",
+          "startPos": 39,
+          "endPos": 46
+        },
+        {
+          "entity": "projector",
+          "startPos": 15,
+          "endPos": 23
+        }
+      ]
+    },
+    {
+      "text": "book room for 10 attendees with projector and phone",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 46,
+          "endPos": 50
+        },
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 25
+        },
+        {
+          "entity": "projector",
+          "startPos": 32,
+          "endPos": 40
+        }
+      ]
+    },
+    {
+      "text": "book room for 10 attendees with projector for a call",
+      "intent": "BookRoom",
+      "entities": [
+        {
+          "entity": "phone",
+          "startPos": 48,
+          "endPos": 51
+        },
+        {
+          "entity": "roomCapacity",
+          "startPos": 14,
+          "endPos": 25
+        },
+        {
+          "entity": "projector",
+          "startPos": 32,
+          "endPos": 40
+        }
+      ]
+    },
+    {
+      "text": "cancel my bookings",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "cancel all bookings",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "cancel bookings",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "cancel bookngs",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "cancel bookiings",
+      "intent": "CancelRoom",
+      "entities": []
+    },
+    {
+      "text": "can you cancel my bookings?",
+      "intent": "CancelRoom",
+      "entities": [
+        {
+          "entity": "myBooking",
+          "startPos": 15,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "how will you help",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "about help",
+      "intent": "help",
+      "entities": []
+    },
+    {
+      "text": "show booking",
+      "intent": "ShowBookingStatus",
+      "entities": []
     }
   ]
 }

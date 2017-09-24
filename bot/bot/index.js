@@ -11,21 +11,9 @@ var connector = new builder.ChatConnector({
 
 var appUrl = process.env.APP_URL;
 
-var DialogLabels = {
-    book_room: 'Book a room',
-    cancel_booking: 'Cancel room booking',
-};
-
-//TODO : give proper msg in Universal Bot also check the logic
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        var msg = session.message.text.toLowerCase();
-        if (msg == '' || msg == 'hi') {
-            session.send('Hello ' + session.message.address.user.name + ', I am ProBOT');
-            session.send('welcome_info');
-
-            provideloginIfneeded(session);
-        }
+        provideloginIfneeded(session);
     }
 ]);
 
@@ -43,7 +31,13 @@ bot.dialog('help', function (session) {
 }
 ).triggerAction({ matches: "help" })
 
-var room = require('./book-room');
+bot.dialog('greetings', function(session){
+    var userName = session.message.address.user.name;
+    var welcomeMessageText = 'Hello'
+    welcomeMessageText += userName ? ' **' + userName + '**' : '';
+    session.say(welcomeMessageText + ", How can I help you?","Hello, How can I help you?");
+}).triggerAction({matches: "Greetings"})
+
 
 bot.on('error', function (e) {
     console.log('And error ocurred', e);
@@ -130,8 +124,15 @@ function provideloginIfneeded(session) {
         //session.userData.userEntry = json;
         session.endDialog();
     }, function (err) {
-        var link = util.format(
-            
+        var userName = session.message.address.user.name;
+        var welcomeMessageText = 'Hello'
+        welcomeMessageText += userName ? ' **' + userName + '**' : '';
+        welcomeMessageText += ', I am **ProBOT**';
+        var welcomeMessage = new builder.Message(session);
+        welcomeMessage.text(welcomeMessageText).textFormat('markdown');
+        session.send(welcomeMessage);
+
+        var link = util.format(      
             '%s/login?userId=%s&channelId=%s',
             appUrl, encodeURIComponent(userId), encodeURIComponent(channelId));
         var msg = new builder.Message(session)
