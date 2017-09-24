@@ -65,7 +65,7 @@ public class UserController
             response.sendError( 401, "User does not exists" );
             return null;
         }
-        return user;
+        return userDetail;
     }
 
     @RequestMapping( value = "/byChannelUserId", method = RequestMethod.POST )
@@ -79,7 +79,7 @@ public class UserController
             response.sendError( 401, "User does not exists" );
             return null;
         }
-        return user;
+        return userDetail;
     }
 
 }
