@@ -115,7 +115,7 @@ function sendMessage(message) {
 
 function provideloginIfneeded(session) {
     var channelId = session.message.address.channelId;
-    var userId = session.message.address.user.id + 'asb';
+    var userId = session.message.address.user.id;
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         //session.userData.userEntry = json;
         session.endDialog();
