@@ -115,7 +115,7 @@ function sendMessage(message) {
 
 function provideloginIfneeded(session) {
     var channelId = session.message.address.channelId;
-    var userId = session.message.address.user.id;
+    var userId = session.message.address.user.id + 'asb';
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         //session.userData.userEntry = json;
         session.endDialog();
@@ -125,13 +125,12 @@ function provideloginIfneeded(session) {
             "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
         var msg = new builder.Message(session)
             .attachments([
-                new builder.HeroCard(session)
-                    .title("You must first login to your account.")
-                    .buttons([
-                        builder.CardAction.openUrl(session, link, "Sign-In")
-                    ])
+                new builder.SigninCard(session)
+                .text("You must first login to your account.")
+                .button("Sign-In", link)
             ]);
             session.send(msg);
+            session.send('You can also use the following to register yourself:' + '\n\n' + link);
             session.endDialog();
     }, { userId: userId, channelId: channelId });
 
