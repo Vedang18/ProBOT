@@ -69,7 +69,13 @@ bot.use({
             // interrupt and trigger 'help' dialog
             //return session.beginDialog('help:/');
         }
-        // continue normal flow
+        if (session.message.address.channelId === 'slack') {
+            if (session.message.sourceEvent.SlackMessage) {
+                if (session.message.sourceEvent.SlackMessage.type === 'message') {
+                    return;
+                }
+            }
+        }
         next();
     }
 });
