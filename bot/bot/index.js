@@ -126,14 +126,14 @@ function provideloginIfneeded(session) {
     session.sendTyping();
     var channelId = session.message.address.channelId;
     var userId = session.message.address.user.id;
+    var userName = session.message.address.user.name;
+    var welcomeMessageText = 'Hello'
+    welcomeMessageText += userName ? ' **' + userName + '**' : '';
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         //session.userData.userEntry = json;
-        session.send('How can I help?');
+        session.send(welcomeMessageText + ', How can I help?');
         session.endDialog();
     }, function (err) {
-        var userName = session.message.address.user.name;
-        var welcomeMessageText = 'Hello'
-        welcomeMessageText += userName ? ' **' + userName + '**' : '';
         welcomeMessageText += ', I am **ProBOT**';
         var welcomeMessage = new builder.Message(session);
         welcomeMessage.text(welcomeMessageText).textFormat('markdown');
