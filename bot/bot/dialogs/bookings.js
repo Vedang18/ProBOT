@@ -77,7 +77,7 @@ function (session, results) {
 }
 ]).triggerAction({
     matches: 'CancelRoom',
-    confirmPrompt: 'room_cancellation_confirmation'
+    // confirmPrompt: 'room_cancellation_confirmation'
 }).cancelAction('cancelCancelRoom', 'room_cancellation_stop', {
     matches: /^(cancel|nevermind)$/i,
     confirmPrompt: 'room_cancellation_confirmation'
@@ -144,12 +144,11 @@ lib.dialog('/bookRoom', [
             }
         }
     }, function (session, results) {
-        // session.dialogData.bookingInfo.
         session.endDialog('All bookings completed!');
     }
 ]).triggerAction({
     matches: 'BookRoom',
-    confirmPrompt: 'book_room_cancel_confirmation'
+    // confirmPrompt: 'book_room_cancel_confirmation'
 }).cancelAction('cancelRoomBooking', 'booking_creation_stop', {
     matches: /^(cancel|nevermind)/i,
     confirmPrompt: 'book_room_cancel_confirmation'
@@ -271,7 +270,9 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
         for (var i = 0; i < dateTimeRangeEntity.resolution.values.length; i++) {
             start = dateTimeRangeEntity.resolution.values[i].start;
             var bookingDate = moment(start, 'YYYY-MM-DD HH:mm:ss');
-            bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
+            if(bookingDate.isAfter(moment())){
+                bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
+            }
         }
     } else {
         if (dateRangeEntity) {

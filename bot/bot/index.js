@@ -36,7 +36,8 @@ bot.dialog('greetings', function(session){
     var welcomeMessageText = 'Hello'
     welcomeMessageText += userName ? ' **' + userName + '**' : '';
     session.say(welcomeMessageText + ", How can I help you?","Hello, How can I help you?");
-}).triggerAction({matches: "Greetings"})
+})
+// .triggerAction({matches: "Greetings"})
 
 
 bot.on('error', function (e) {
