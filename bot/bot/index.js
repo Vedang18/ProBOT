@@ -14,7 +14,7 @@ var appUrl = process.env.APP_URL;
 var bot = new builder.UniversalBot(connector, [
     function (session) {
         var msg = session.message.text.trim().toLowerCase();
-        if(msg == 'hi' || msg == 'hello'){
+        if(msg == '' || msg == 'hi' || msg == 'hello'){
             provideloginIfneeded(session);
         } else {
             session.send('Sorry! I could not understand you.');
