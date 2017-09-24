@@ -60,7 +60,13 @@ bot.use({
             // interrupt and trigger 'help' dialog
             //return session.beginDialog('help:/');
         }
-        // continue normal flow
+        if (session.message.address.channelId === 'slack') {
+            if (session.message.sourceEvent.SlackMessage) {
+                if (session.message.sourceEvent.SlackMessage.type === 'message') {
+                    return;
+                }
+            }
+        }
         next();
     }
 });
@@ -108,6 +114,7 @@ function sendMessage(message) {
 }
 
 function provideloginIfneeded(session) {
+    session.sendTyping();
     var channelId = session.message.address.channelId;
     var userId = session.message.address.user.id;
     prorigoRest.findUserByChannelIdAndUserId(function (json) {

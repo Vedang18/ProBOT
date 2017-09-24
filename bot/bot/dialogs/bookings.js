@@ -40,7 +40,8 @@ lib.dialog('/CancelBooking', [function (session, args, next) {
     prorigoRest.getMyBookings(function (jsonBody) {
         if (jsonBody.length == 0) {
             var showBookingsMessage = "You have no reserved room"
-            session.send(showBookingsMessage)
+            session.send(showBookingsMessage);
+            session.endDialog();
         } else {
             var room_list = [];
             for (var i = 0; i < jsonBody.length; i++) {
@@ -63,6 +64,7 @@ lib.dialog('/CancelBooking', [function (session, args, next) {
 },
 function (session, results) {
     session.dialogData.ans = results.response.entity;
+    session.sendTyping();
     if (session.dialogData.ans == "Yes") {
         prorigoRest.cancelBookings(function () {
             session.endDialog("Booking deleted successfully!");
@@ -115,9 +117,6 @@ lib.dialog('/bookRoom', [
         session.dialogData.bookingInfo.bookingPurpose = results.response;
         curateDataTypes(session.dialogData.bookingInfo);
         var message = createBookingSummary(session, session.dialogData.bookingInfo);
-        //session.send(message);
-
-        //}, function(session, results, next){
         builder.Prompts.choice(session, "Are you sure you want to book " + message.data.text + "?", ["Yes", "No"], { listStyle: 3 });
         next();
     },
@@ -125,6 +124,7 @@ lib.dialog('/bookRoom', [
         curateDataTypes(session.dialogData.bookingInfo);
         if (results.response.entity == "Yes") {
             var meetings = createBookingPostData(session.dialogData.bookingInfo);
+            session.sendTyping();
             for (var i = 0; i < meetings.length; i++) {
                 var runs = 0;
                 prorigoRest.bookRoom(function () {
@@ -133,6 +133,8 @@ lib.dialog('/bookRoom', [
                     runs++;
                     if (runs == meetings.length) {
                         next();
+                    } else {
+                        session.sendTyping();
                     }
                 }, function (err) {
                     var msg = meetings[runs].room + ' booking unsuccessful: ' + meetings[runs].date + ' from ' + meetings[runs].fromTime + ' to ' + meetings[runs].toTime + '\n\n';
@@ -183,8 +185,8 @@ function curateDataTypes(bookingInfo) {
 }
 
 function userInfo(address) {
-    return { userId: 'test', channelId: 'skype' };
-    // return {userId : address.user.id, channelId: address.channelId};
+    // return { userId: 'test', channelId: 'skype' };
+     return {userId : address.user.id, channelId: address.channelId};
 }
 
 function createBookingSummary(session, bookingInfo) {
