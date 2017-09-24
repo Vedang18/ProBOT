@@ -9,6 +9,8 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
+var appUrl = process.env.APP_URL;
+
 var DialogLabels = {
     book_room: 'Book a room',
     cancel_booking: 'Cancel room booking',
@@ -19,10 +21,8 @@ var bot = new builder.UniversalBot(connector, [
     function (session) {
         var msg = session.message.text.toLowerCase();
         if (msg == '' || msg == 'hi') {
-            session.send('Hello ' + session.message.address.user.name);
-            session.send('welcome_title');
+            session.send('Hello ' + session.message.address.user.name + ', I am ProBOT');
             session.send('welcome_info');
-            session.send('Just type away your requests or queries');
 
             provideloginIfneeded(session);
         }
@@ -36,7 +36,10 @@ bot.library(require('./dialogs/holidays').createLibrary());
 bot.library(require('./dialogs/bookings').createLibrary());
 
 bot.dialog('help', function (session) {
-    session.endDialog("I can help you in: \n1. Room Booking \n2. Cancel Booking \n3. Show Bookings \n4. Show Holidays")
+    var helpMessageText = "\n* Room Booking \n* Cancel Booking \n* Show Bookings \n* Show Holidays";
+    var helpMessage = new builder.Message(session);
+    helpMessage.text(helpMessageText).textFormat('markdown');
+    session.endDialog("ProBOT is here to help you in: " + helpMessage.data.text);
 }
 ).triggerAction({ matches: "help" })
 
@@ -121,8 +124,9 @@ function provideloginIfneeded(session) {
         session.endDialog();
     }, function (err) {
         var link = util.format(
+            
             '%s/login?userId=%s&channelId=%s',
-            "http://localhost:3978", encodeURIComponent(userId), encodeURIComponent(channelId));
+            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId));
         var msg = new builder.Message(session)
             .attachments([
                 new builder.SigninCard(session)

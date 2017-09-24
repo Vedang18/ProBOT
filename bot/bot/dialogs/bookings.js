@@ -192,6 +192,7 @@ function createBookingSummary(session, bookingInfo) {
     bookingSummaryText += '**' + bookingInfo.bookingRoom + '**' + '\n\n';
     bookingSummaryText += bookingInfo.bookingStartTime.format('hh:mm A') + ' to ' + bookingInfo.bookingEndTime.format('hh:mm A') + ' on ' + '\n\n';
     bookingInfo.bookingDates.forEach((date) => { bookingSummaryText += date.format('DD-MM-YYYY') + ',' }) + '\n\n';
+    bookingSummaryText = bookingSummaryText.substring(0, bookingSummaryText.length-1 );
     bookingSummaryText += "\n\n";
     bookingSummaryText += bookingInfo.bookingPurpose;
     var bookingSummaryMsg = new builder.Message(session);

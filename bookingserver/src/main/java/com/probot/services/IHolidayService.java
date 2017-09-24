@@ -12,7 +12,6 @@ import com.probot.entities.Holidays;
 public interface IHolidayService
 {
     List<Holidays> getHolidaysafter(Date date);
-    List<Holidays> getHolidaysBetween(Date startDate, Date endDate);
     List<Holidays> getAllHolidays();
     List<Holidays> getHolidaysInBetween(Date startDate, Date endDate);
 }
