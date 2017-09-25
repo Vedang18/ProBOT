@@ -58,7 +58,7 @@ lib.dialog('/', [function(session, args, next) {
 function createHolidayMessage(session, holidayJson){
     var holidayMessageText = '';
     if(holidayJson.length == 0){
-        holidayMessageText = 'No holidays';
+        holidayMessageText = 'No holidays :(';
     } else {
         holidayJson.forEach(function(holiday){
             holidayMessageText += '* **' + holiday.reason + '** on ' + holiday.date + '\n\n';
