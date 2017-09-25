@@ -15,6 +15,10 @@ var bot = new builder.UniversalBot(connector, [
     function (session) {
         var msg = session.message.text.trim().toLowerCase();
         if(msg == '' || msg == 'hi' || msg == 'hello'){
+            var userName = session.message.address.user.name;
+            var welcomeMessageText = 'Hello'
+            welcomeMessageText += userName ? ' **' + userName + '**' : '';
+            session.say(welcomeMessageText + ", How can I help you?","Hello, How can I help you?");
             provideloginIfneeded(session);
         } else {
             session.send('Sorry! I could not understand you.');
