@@ -135,7 +135,7 @@ function provideloginIfneeded(session) {
     welcomeMessageText += userName ? ' **' + userName + '**' : '';
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         //session.userData.userEntry = json;
-        session.send(welcomeMessageText + ', How can I help?');
+//         session.send(welcomeMessageText + ', How can I help?');
         session.endDialog();
     }, function (err) {
         welcomeMessageText += ', I am **ProBOT**';
