@@ -4,6 +4,13 @@ var prorigoRest = require('../prorigoRest');
 var moment = require('moment');
 var roomLabel = require('./roomLabel');
 
+var maxBookingAllowed = process.env.MAX_BOOKING_ALLOWED;
+if(maxBookingAllowed)
+{
+    maxBookingAllowed = parseInt(maxBookingAllowed);
+} else {
+    maxBookingAllowed = 10;
+}
 
 var lib = new builder.Library('booking');
 
@@ -97,6 +104,10 @@ lib.dialog('/bookRoom', [
         if(bookingInfo.bookingDates.length == 0){
             session.endDialog('No Booking done!');
             return;
+        }
+        if(bookingInfo.bookingDates.length > maxBookingAllowed){
+            session.send('Too many bookings. Only first ' + maxBookingAllowed + ' will be done.');
+            bookingInfo.bookingDates.length = maxBookingAllowed;
         }
         if (bookingInfo.bookingRoom) {
             bookingInfo.bookingRoom = roomLabel[bookingInfo.bookingRoom];
