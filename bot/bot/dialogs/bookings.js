@@ -207,8 +207,8 @@ function curateDataTypes(bookingInfo) {
 }
 
 function userInfo(address) {
-    return { userId: 'test', channelId: 'skype' };
-    // return {userId : address.user.id, channelId: address.channelId};
+    // return { userId: 'test', channelId: 'skype' };
+     return {userId : address.user.id, channelId: address.channelId};
 }
 
 function createBookingSummary(session, bookingInfo) {
