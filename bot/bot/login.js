@@ -8,6 +8,7 @@ $(function () {
         data.userId = $("#userId").val();
         data.username = $("#username").val();
         data.password = $("#password").val();
+        data.addressString = $("#addressId").val();
 
         $.ajax({
             type: 'POST',

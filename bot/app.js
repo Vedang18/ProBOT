@@ -36,8 +36,10 @@ app.post('/login', function (req, res) {
     var channelId = req.query.channelId;
     var username = req.body.username;
     var password = req.body.password;
+    var addressString = req.query.address;
 
     prorigoRest.saveUser(function (json) {
+        bot.sendMessage('Welcome! :)', JSON.parse(addressString));
         res.status(200).send("User credentials saved successfully. You can continue to use the bot.");
     },
     function (err) {
