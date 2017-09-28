@@ -38,12 +38,19 @@ app.post('/login', function (req, res) {
     var password = req.body.password;
 
     prorigoRest.saveUser(function (json) {
-         res.status(200).send({"data":"User added"});
+        res.status(200).send("User credentials saved successfully. You can continue to use the bot.");
     },
-        function (err) {
-           res.status(500).send({"error":"Unauthorised"});
-        },
-        { 'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
+    function (err) {
+        res.status(500).send("Could not authenticate with provided username & password.");
+    },
+    {'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
+});
+
+app.post('/api/sendmessage', function(req, res){
+    var txtMsg = req.body.msg;
+    var addressString = req.body.addressString;
+    bot.sendMessage(txtMsg, JSON.parse(addressString));
+    res.status(200).send();
 });
 
     // Catch 404 and forward to error handler

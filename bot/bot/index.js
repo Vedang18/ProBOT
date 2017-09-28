@@ -118,8 +118,10 @@ function beginDialog(address, dialogId, dialogArgs) {
     bot.beginDialog(address, dialogId, dialogArgs);
 }
 
-function sendMessage(message) {
-    bot.send(message);
+function sendMessage(message, address) {
+    var msg = new builder.Message().address(address);
+    msg.text(message);
+    bot.send(msg);
 }
 
 function provideloginIfneeded(session) {
