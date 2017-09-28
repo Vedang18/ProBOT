@@ -118,8 +118,10 @@ function beginDialog(address, dialogId, dialogArgs) {
     bot.beginDialog(address, dialogId, dialogArgs);
 }
 
-function sendMessage(message) {
-    bot.send(message);
+function sendMessage(message, address) {
+    var msg = new builder.Message().address(address);
+    msg.text(message);
+    bot.send(msg);
 }
 
 function provideloginIfneeded(session) {
@@ -127,6 +129,7 @@ function provideloginIfneeded(session) {
     var channelId = session.message.address.channelId;
     var userId = session.message.address.user.id;
     var userName = session.message.address.user.name;
+    var addressString = JSON.stringify(session.message.address);
     var welcomeMessageText = 'Hello'
     welcomeMessageText += userName ? ' **' + userName + '**' : '';
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
@@ -139,8 +142,8 @@ function provideloginIfneeded(session) {
         session.send(welcomeMessage);
 
         var link = util.format(      
-            '%s/login?userId=%s&channelId=%s',
-            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId));
+            '%s/login?userId=%s&channelId=%s&address=%s',
+            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId), encodeURIComponent(addressString));
         var msg = new builder.Message(session)
             .attachments([
                 new builder.SigninCard(session)
