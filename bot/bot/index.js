@@ -13,13 +13,12 @@ var appUrl = process.env.APP_URL;
 
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        // var msg = session.message.text.trim().toLowerCase();
-        // if(msg == '' || msg == 'hi' || msg == 'hello'){
-        //     provideloginIfneeded(session);
-        // } else {
-        //     session.send('Sorry! I could not understand you.');
-        // }
-        session.send('Bot Service under maintenance, Sorry for the inconvenience.');
+        var msg = session.message.text.trim().toLowerCase();
+        if(msg == '' || msg == 'hi' || msg == 'hello'){
+            provideloginIfneeded(session);
+        } else {
+            session.send('Sorry! I could not understand you.');
+        }
     }
 ]);
 
