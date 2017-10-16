@@ -45,7 +45,7 @@ app.post('/login', function (req, res) {
     function (err) {
         res.status(500).send("Could not authenticate with provided username & password.");
     },
-    {'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
+    {'channelId': channelId, 'userId': userId, 'username': username, 'password': password, 'address':addressString });
 });
 
 app.post('/api/sendmessage', function(req, res){
