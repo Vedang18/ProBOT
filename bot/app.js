@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Register your web app routes here
 app.get('/', function (req, res, next) {
-    res.render('index', { title: 'ProBOT' });
+    res.render('index', { title: 'ProBOT'});
 });
 
 app.get('/login', function (req, res, next) {
@@ -28,7 +28,8 @@ app.get('/login', function (req, res, next) {
 });
 
 app.get('/changePassword',function(req,res,next){
-    res.render('change-password',{title: 'ProBOT'});
+    var userId = req.query.userName;
+    res.render('change-password',{title: 'ProBOT', userId: userId});
 })
 
 // Register Bot
