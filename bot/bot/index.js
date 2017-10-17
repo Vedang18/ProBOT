@@ -16,6 +16,9 @@ var bot = new builder.UniversalBot(connector, [
         var msg = session.message.text.trim().toLowerCase();
         if(msg == '' || msg == 'hi' || msg == 'hello'){
             provideloginIfneeded(session);
+        }
+        else if(msg == 'change password'){
+            session.beginDialog('change password',session);
         } else {
             session.send('Sorry! I could not understand you.');
         }
@@ -44,6 +47,25 @@ bot.dialog('greetings', function(session){
 })
 // .triggerAction({matches: "Greetings"})
 
+//change password
+bot.dialog('change password', function (session) {
+    var channelId = session.message.address.channelId;
+    var userId = session.message.address.user.id;
+    var userName;
+
+    session.say("Please click on the following link");
+
+    prorigoRest.findUserByChannelIdAndUserId(function (json) {
+        userName = json.username;
+        console.log("Inside find" + userName);
+        var link = util.format(
+            '%s/changePassword?userId=%s&channelId=%s&userName=%s',
+            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId), encodeURIComponent(userName));
+        session.endDialog(link);
+    }, function (err) {
+        session.endDialog();
+    }, { userId: userId, channelId: channelId });
+})
 
 bot.on('error', function (e) {
     console.log('And error ocurred', e);
@@ -157,8 +179,6 @@ function provideloginIfneeded(session) {
 
 
 }
-
-
 
 module.exports = {
     listen: listen,
