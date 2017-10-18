@@ -20,12 +20,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Register your web app routes here
 app.get('/', function (req, res, next) {
-    res.render('index', { title: 'ProBOT' });
+    res.render('index', { title: 'ProBOT'});
 });
 
 app.get('/login', function (req, res, next) {
     res.render('login', { title: 'ProBOT' });
 });
+
+app.get('/changePassword',function(req,res,next){
+    var userId = req.query.userName;
+    res.render('change-password',{title: 'ProBOT', userId: userId});
+})
 
 // Register Bot
 var bot = require('./bot');
@@ -45,7 +50,22 @@ app.post('/login', function (req, res) {
     function (err) {
         res.status(500).send("Could not authenticate with provided username & password.");
     },
-    {'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
+    {'channelId': channelId, 'userId': userId, 'username': username, 'password': password, 'address':addressString });
+});
+
+app.post('/changePassword', function (req, res) {
+    var userId = req.query.userId;
+    var channelId = req.query.channelId;
+    var username = req.body.username;
+    var password = req.body.password;
+
+    prorigoRest.saveUser(function (json) {
+        res.status(200).send("User credentials saved successfully. You can continue to use the bot.");
+    },
+        function (err) {
+            res.status(500).send("User credentials provided are not valid");
+        },
+        { 'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
 });
 
 app.post('/api/sendmessage', function(req, res){
