@@ -84,6 +84,7 @@ bot.set('localizerSettings', {
 bot.use({
     botbuilder: function (session, next) {
         var text = session.message.text.toLowerCase();
+        logger.debug('message to bot:');
         logger.debug(session.message);
         var supportRegex = localizedRegex(session, ['help']);
 
@@ -98,6 +99,11 @@ bot.use({
                 }
             }
         }
+        next();
+    },
+    send: function(event, next){
+        logger.debug('message from bot:');
+        logger.debug(event);
         next();
     }
 });
