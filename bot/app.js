@@ -20,16 +20,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Register your web app routes here
 app.get('/', function (req, res, next) {
-    res.render('index', { title: 'ProBOT'});
+    res.render('index', { title: 'ProBOT' });
 });
 
 app.get('/login', function (req, res, next) {
     res.render('login', { title: 'ProBOT' });
 });
 
-app.get('/changePassword',function(req,res,next){
+app.get('/changePassword', function (req, res, next) {
     var userId = req.query.userName;
-    res.render('change-password',{title: 'ProBOT', userId: userId});
+    res.render('change-password', { title: 'ProBOT', userId: userId });
 })
 
 // Register Bot
@@ -37,20 +37,20 @@ var bot = require('./bot');
 app.post('/api/messages', bot.listen());
 
 app.post('/login', function (req, res) {
-    var userId = req.query.userId;
-    var channelId = req.query.channelId;
+    var userId = req.body.userId;
+    var channelId = req.body.channelId;
     var username = req.body.username;
     var password = req.body.password;
-    var addressString = req.query.address;
+    var addressString = req.body.address;
 
     prorigoRest.saveUser(function (json) {
         bot.sendMessage('Welcome! :)', JSON.parse(addressString));
         res.status(200).end();
     },
-    function (err) {
-        res.status(500).end();
-    },
-    {'channelId': channelId, 'userId': userId, 'username': username, 'password': password, 'address':addressString });
+        function (err) {
+            res.status(500).end();
+        },
+        { 'channelId': channelId, 'userId': userId, 'username': username, 'password': password, 'address': addressString });
 });
 
 app.post('/changePassword', function (req, res) {
@@ -68,45 +68,45 @@ app.post('/changePassword', function (req, res) {
         { 'channelId': channelId, 'userId': userId, 'username': username, 'password': password });
 });
 
-app.post('/api/sendmessage', function(req, res){
+app.post('/api/sendmessage', function (req, res) {
     var txtMsg = req.body.msg;
     var addressString = req.body.addressString;
     bot.sendMessage(txtMsg, JSON.parse(addressString));
     res.status(200).send();
 });
 
-    // Catch 404 and forward to error handler
-    app.use(function (req, res, next) {
-        var err = new Error('Not Found');
-        err.status = 404;
-        next(err);
-    });
+// Catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
-    // Error handlers
+// Error handlers
 
-    // Development error handler, will print stacktrace
-    if (app.get('env') === 'development') {
-        app.use(function (err, req, res, next) {
-            res.status(err.status || 500);
-            res.render('error', {
-                message: err.message,
-                error: err
-            });
-        });
-    }
-
-    // Production error handler, no stacktraces leaked to user
+// Development error handler, will print stacktrace
+if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
-            error: {}
+            error: err
         });
     });
+}
 
-    // Start listening
-    var port = process.env.port || process.env.PORT || 3978;
-    app.listen(port, function () {
-        console.log('Web Server listening on port %s', port);
-        logger.debug('Server started on: ' + moment().format('YYYY-MM-DD hh:mm:ss A Z'));
+// Production error handler, no stacktraces leaked to user
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
     });
+});
+
+// Start listening
+var port = process.env.port || process.env.PORT || 3978;
+app.listen(port, function () {
+    console.log('Web Server listening on port %s', port);
+    logger.debug('Server started on: ' + moment().format('YYYY-MM-DD hh:mm:ss A Z'));
+});

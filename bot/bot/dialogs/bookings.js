@@ -5,8 +5,7 @@ var moment = require('moment');
 var roomLabel = require('./roomLabel');
 
 var maxBookingAllowed = process.env.MAX_BOOKING_ALLOWED;
-if(maxBookingAllowed)
-{
+if (maxBookingAllowed) {
     maxBookingAllowed = parseInt(maxBookingAllowed);
 } else {
     maxBookingAllowed = 10;
@@ -101,11 +100,11 @@ lib.dialog('/bookRoom', [
         }
         var numDates = bookingInfo.bookingDates.length;
         checkTimings(session, bookingInfo.bookingStartTime, bookingInfo.bookingEndTime, bookingInfo.bookingDates);
-        if(bookingInfo.bookingDates.length == 0){
+        if (bookingInfo.bookingDates.length == 0) {
             session.endDialog('No Booking done!');
             return;
         }
-        if(bookingInfo.bookingDates.length > maxBookingAllowed){
+        if (bookingInfo.bookingDates.length > maxBookingAllowed) {
             session.send('Too many bookings. Only first ' + maxBookingAllowed + ' will be done.');
             bookingInfo.bookingDates.length = maxBookingAllowed;
         }
@@ -216,7 +215,7 @@ function createBookingSummary(session, bookingInfo) {
     bookingSummaryText += '**' + bookingInfo.bookingRoom + '**' + '\n\n';
     bookingSummaryText += bookingInfo.bookingStartTime.format('hh:mm A') + ' to ' + bookingInfo.bookingEndTime.format('hh:mm A') + ' on ' + '\n\n';
     bookingInfo.bookingDates.forEach((date) => { bookingSummaryText += date.format('DD-MM-YYYY') + ',' }) + '\n\n';
-    bookingSummaryText = bookingSummaryText.substring(0, bookingSummaryText.length-1 );
+    bookingSummaryText = bookingSummaryText.substring(0, bookingSummaryText.length - 1);
     bookingSummaryText += "\n\n";
     bookingSummaryText += bookingInfo.bookingPurpose;
     var bookingSummaryMsg = new builder.Message(session);
@@ -231,7 +230,7 @@ function createBookingMessage(session, bookingJson) {
     } else {
         bookingJson.forEach(function (booking) {
             bookingMessageText += '*  **' + booking.room + '** on ' + booking.date + ' from '
-                + booking.fromTime + ' to ' + booking.toTime + ' for ' + booking.reason 
+                + booking.fromTime + ' to ' + booking.toTime + ' for ' + booking.reason
                 + ' with ' + booking.attendees + '\n\n';
         });
     }
@@ -293,7 +292,7 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
         for (var i = 0; i < dateTimeRangeEntity.resolution.values.length; i++) {
             start = dateTimeRangeEntity.resolution.values[i].start;
             var bookingDate = moment(start, 'YYYY-MM-DD HH:mm:ss');
-            if(bookingDate.isAfter(moment())){
+            if (bookingDate.isAfter(moment())) {
                 bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
             }
         }
@@ -315,7 +314,7 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
                 var dateEntity = dateEntities[i];
                 for (var j = 0; j < dateEntity.resolution.values.length; j++) {
                     var value = dateEntity.resolution.values[j];
-                    var valueDate = moment(value.value, 'YYYY-MM-DD'); 
+                    var valueDate = moment(value.value, 'YYYY-MM-DD');
                     if (todaysDate.isBefore(valueDate) || todaysDate.isSame(valueDate)) {
                         bookingDates.push(moment(valueDate));
                     }
@@ -356,24 +355,24 @@ function getBookingRoom(roomEntity) {
     return room;
 }
 
-function checkTimings(session, startTime, endTime, dates){
+function checkTimings(session, startTime, endTime, dates) {
     var today = moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD');
-    for(var i = 0; i < dates.length; i++){
+    for (var i = 0; i < dates.length; i++) {
         var isRemoved = false;
-        if(dates[i].isSame(today)){
-            if(startTime.isAfter(endTime)){
+        if (dates[i].isSame(today)) {
+            if (startTime.isAfter(endTime)) {
                 isRemoved = true;
                 session.send('Booking start time cannot be after end time.');
-            } else if(startTime.isBefore(moment())){
+            } else if (startTime.isBefore(moment())) {
                 isRemoved = true;
                 session.send('Start time cannot be a past time');
             }
-        } else if(dates[i].isBefore(today)){
+        } else if (dates[i].isBefore(today)) {
             isRemoved = true;
             session.send('Cannot book on ' + dates[i].format('DD-MM-YYYY'));
         }
-        if(isRemoved){
-            session.send('Booking for '+ dates[i].format('DD-MM-YYYY') + ' will be removed');
+        if (isRemoved) {
+            session.send('Booking for ' + dates[i].format('DD-MM-YYYY') + ' will be removed');
             dates.splice(i, 1);
             i--;
         }
