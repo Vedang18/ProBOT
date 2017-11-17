@@ -45,10 +45,10 @@ app.post('/login', function (req, res) {
 
     prorigoRest.saveUser(function (json) {
         bot.sendMessage('Welcome! :)', JSON.parse(addressString));
-        res.status(200).send("User credentials saved successfully. You can continue to use the bot.");
+        res.status(200).end();
     },
     function (err) {
-        res.status(500).send("Could not authenticate with provided username & password.");
+        res.status(500).end();
     },
     {'channelId': channelId, 'userId': userId, 'username': username, 'password': password, 'address':addressString });
 });

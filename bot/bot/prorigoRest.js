@@ -89,7 +89,7 @@ function getMyBookings(callback, errCallback, json){
     });;
 }
 
-function saveUser(callback, errCallback,json){
+function saveUser(callback, errCallback, json){
     var headers = {
         "Content-Type": "application/json",
         "Accept": "application/json"
