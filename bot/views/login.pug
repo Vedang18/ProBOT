@@ -2,7 +2,7 @@ extends layout
 
 block content
   .main.container
-    .row
+    .row.justify-content-around
       .col-md-6.col-md-offset-3
         script(src='login.js')
         div.alert(role='alert' id="alert-msg") Logged in successfully using credentials
@@ -17,7 +17,7 @@ block content
               label(for='password') Password
               input.form-control(type='password' id='password' placeholder='password' name='password' required)
               div.invalid-feedback Password cannot be empty
-            small.form-text.text-muted Your username & encrypted password will be saved in our database.
+              small.form-text.text-muted Your username & encrypted password will be saved in our database.
             input.form-control(type='hidden' name='channelId' value='channelId')
             input.form-control(type='hidden' name='userId' value='user')
             input.form-control(type='hidden' name='addressId' value='address')
