@@ -15,6 +15,9 @@ var lib = new builder.Library('booking');
 
 lib.dialog('/ShowBookingStatus', [
     function (session, args, next) {
+        checkUserAuthorizedOrNot(session, args, next);
+    },
+    function (session, args, next) {
         session.sendTyping();
         var intent = args.intent;
 
@@ -41,46 +44,50 @@ lib.dialog('/ShowBookingStatus', [
         matches: 'ShowBookingStatus'
     });
 
-lib.dialog('/CancelBooking', [function (session, args, next) {
-    session.sendTyping();
-    prorigoRest.getMyBookings(function (jsonBody) {
-        if (jsonBody.length == 0) {
-            var showBookingsMessage = "You have no reserved room"
-            session.send(showBookingsMessage);
-            session.endDialog();
-        } else {
-            var room_list = [];
-            for (var i = 0; i < jsonBody.length; i++) {
-                room_list[i] = jsonBody[i].room + "  " + jsonBody[i].date + "  " + jsonBody[i].fromTime + " to " + jsonBody[i].toTime;
+lib.dialog('/CancelBooking', [
+    function (session, args, next) {
+        checkUserAuthorizedOrNot(session, args, next);
+    },
+    function (session, args, next) {
+        session.sendTyping();
+        prorigoRest.getMyBookings(function (jsonBody) {
+            if (jsonBody.length == 0) {
+                var showBookingsMessage = "You have no reserved room"
+                session.send(showBookingsMessage);
+                session.endDialog();
+            } else {
+                var room_list = [];
+                for (var i = 0; i < jsonBody.length; i++) {
+                    room_list[i] = jsonBody[i].room + "  " + jsonBody[i].date + "  " + jsonBody[i].fromTime + " to " + jsonBody[i].toTime;
+                }
+                session.dialogData.room_list = jsonBody;
+                builder.Prompts.choice(session, "Which room do you want to cancel?", room_list, { listStyle: 3 })
             }
-            session.dialogData.room_list = jsonBody;
-            builder.Prompts.choice(session, "Which room do you want to cancel?", room_list, { listStyle: 3 })
-        }
-    }, function (err) {
-        logger.error(err);
-        session.endDialog('something_went_wrong');
-    }, userInfo(session.message.address));
-}, function (session, results) {
-    var meeting = session.dialogData.room_list[results.response.index];
-    session.dialogData.meeting = meeting;
-    var promptMsg1 = "Are you sure you want to cancel ";
-    var promptMsg2 = meeting.room + " on " + meeting.date + " from " + meeting.fromTime + " to " + meeting.toTime + " ?";
-    var promptMsg = promptMsg1 + promptMsg2;
-    builder.Prompts.choice(session, promptMsg, ["Yes", "No"], { listStyle: 3 });
-},
-function (session, results) {
-    session.dialogData.ans = results.response.entity;
-    session.sendTyping();
-    if (session.dialogData.ans == "Yes") {
-        prorigoRest.cancelBookings(function () {
-            session.endDialog("Booking deleted successfully!");
-        }, function () {
+        }, function (err) {
+            logger.error(err);
             session.endDialog('something_went_wrong');
-        }, { user: userInfo(session.message.address), meeting: session.dialogData.meeting });
-    } else {
-        session.endDialog();
+        }, userInfo(session.message.address));
+    }, function (session, results) {
+        var meeting = session.dialogData.room_list[results.response.index];
+        session.dialogData.meeting = meeting;
+        var promptMsg1 = "Are you sure you want to cancel ";
+        var promptMsg2 = meeting.room + " on " + meeting.date + " from " + meeting.fromTime + " to " + meeting.toTime + " ?";
+        var promptMsg = promptMsg1 + promptMsg2;
+        builder.Prompts.choice(session, promptMsg, ["Yes", "No"], { listStyle: 3 });
+    },
+    function (session, results) {
+        session.dialogData.ans = results.response.entity;
+        session.sendTyping();
+        if (session.dialogData.ans == "Yes") {
+            prorigoRest.cancelBookings(function () {
+                session.endDialog("Booking deleted successfully!");
+            }, function () {
+                session.endDialog('something_went_wrong');
+            }, { user: userInfo(session.message.address), meeting: session.dialogData.meeting });
+        } else {
+            session.endDialog();
+        }
     }
-}
 ]).triggerAction({
     matches: 'CancelRoom',
     // confirmPrompt: 'room_cancellation_confirmation'
@@ -91,6 +98,9 @@ function (session, results) {
 
 
 lib.dialog('/bookRoom', [
+    function (session, args, next) {
+        checkUserAuthorizedOrNot(session, args, next);
+    },
     function (session, args, next) {
         session.sendTyping();
         var bookingInfo = parseBookingEntities(args.intent);
@@ -207,7 +217,7 @@ function curateDataTypes(bookingInfo) {
 
 function userInfo(address) {
     return { userId: 'test', channelId: 'skype' };
-    // return {userId : address.user.id, channelId: address.channelId};
+    // return { userId: address.user.id, channelId: address.channelId };
 }
 
 function createBookingSummary(session, bookingInfo) {
@@ -379,6 +389,13 @@ function checkTimings(session, startTime, endTime, dates) {
     }
 }
 
+function checkUserAuthorizedOrNot(session, args, next) {
+    prorigoRest.findUserByChannelIdAndUserId(function (json) {
+        next(args);
+    }, function (err) {
+        session.endDialog('something_went_wrong');
+    }, userInfo(session.message.address));
+}
 
 function numToTime(num) {
     var sec_num = parseInt(num, 10); // 2nd param is base

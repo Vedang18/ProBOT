@@ -54,11 +54,10 @@ bot.dialog('change password', function (session) {
     var addressString = JSON.stringify(session.message.address);
     var userName;
 
-    session.say("Please click on the following link");
-
     prorigoRest.findUserByChannelIdAndUserId(function (json) {
         userName = json.username;
         console.log("Inside find" + userName);
+        session.say("Please click on the following link");
         var link = util.format(
             '%s/login?userId=%s&channelId=%s&address=%s&userName=%s',
             appUrl, encodeURIComponent(userId), encodeURIComponent(channelId), encodeURIComponent(addressString), encodeURIComponent(userName));
@@ -72,6 +71,9 @@ bot.dialog('change password', function (session) {
         session.send('You can also use the following to change your password:' + '\n\n' + link);
         session.endDialog();
     }, function (err) {
+        if (err.message === 'Unauthorized') {
+            createSignInLink(session, userId, channelId, addressString);
+        }
         session.endDialog();
     }, { userId: userId, channelId: channelId });
 })
@@ -178,21 +180,23 @@ function provideloginIfneeded(session) {
         welcomeMessage.text(welcomeMessageText).textFormat('markdown');
         session.send(welcomeMessage);
 
-        var link = util.format(
-            '%s/login?userId=%s&channelId=%s&address=%s',
-            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId), encodeURIComponent(addressString));
-        var msg = new builder.Message(session)
-            .attachments([
-                new builder.SigninCard(session)
-                    .text("You must first login to your account.")
-                    .button("Sign-In", link)
-            ]);
-        session.send(msg);
-        session.send('You can also use the following to register yourself:' + '\n\n' + link);
+        createSignInLink(session, userId, channelId, addressString);
         session.endDialog();
     }, { userId: userId, channelId: channelId });
+}
 
-
+function createSignInLink(session, userId, channelId, addressString) {
+    var link = util.format(
+        '%s/login?userId=%s&channelId=%s&address=%s',
+        appUrl, encodeURIComponent(userId), encodeURIComponent(channelId), encodeURIComponent(addressString));
+    var msg = new builder.Message(session)
+        .attachments([
+            new builder.SigninCard(session)
+                .text("You must first login to your account.")
+                .button("Sign-In", link)
+        ]);
+    session.send(msg);
+    session.send('You can also use the following to register yourself:' + '\n\n' + link);
 }
 
 module.exports = {
