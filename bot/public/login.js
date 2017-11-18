@@ -2,6 +2,12 @@
 $(document).ready(function () {
     $("#alert-msg").hide();
     var form = $('#login-form');
+
+    if (getUrlParameter('userName')) {
+        $("#page-title").html("Change Password")
+        $("#username").attr("disabled", "");
+        $("#username").val(getUrlParameter('userName'));
+    }
     form.submit(function (event) {
         event.stopPropagation();
         event.preventDefault();
