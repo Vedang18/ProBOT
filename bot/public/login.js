@@ -2,7 +2,7 @@
 $(document).ready(function () {
     $("#alert-msg").hide();
     var form = $('#login-form');
-
+    $.validator.messages.required = ''; // Disables 'This field is required.' on validation
     if (getUrlParameter('userName')) {
         $("#page-title").html("Change Password")
         $("#username").attr("disabled", "");
@@ -33,12 +33,14 @@ $(document).ready(function () {
     function ShowAlertSuccess() {
         $("#login-form-container").hide();
         $("#alert-msg").show();
+        $("#alert-msg").removeClass("alert-danger");
         $("#alert-msg").addClass("alert-success");
         $("#alert-msg").html("User credentials saved successfully. You can continue to use the bot.");
     }
     function ShowAlertDanger() {
         $("#alert-msg").show();
         $("#login-form-container").show();
+        $("#alert-msg").removeClass("alert-success");
         $("#alert-msg").addClass("alert-danger");
         $("#alert-msg").html("Could not authenticate with provided username & password.");
     }
