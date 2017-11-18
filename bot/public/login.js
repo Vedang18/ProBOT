@@ -1,6 +1,7 @@
 
 $(document).ready(function () {
     $("#alert-msg").hide();
+    disableSpinner();
     var form = $('#login-form');
     $.validator.messages.required = ''; // Disables 'This field is required.' on validation
     if (getUrlParameter('userName')) {
@@ -12,6 +13,7 @@ $(document).ready(function () {
         event.stopPropagation();
         event.preventDefault();
         if (form.valid()) {
+            enableSpinner();
             var data = {};
             data.username = $("#username").val();
             data.password = $("#password").val();
@@ -19,12 +21,14 @@ $(document).ready(function () {
             data.userId = getUrlParameter('userId');
             data.address = getUrlParameter('address')
             $.post('/login', data, function (data, status) {
+                disableSpinner();
                 if (status === 'success') {
                     ShowAlertSuccess();
                 } else {
                     ShowAlertDanger();
                 }
             }).fail(function (err) {
+                disableSpinner();
                 ShowAlertDanger();
             });
         }
@@ -58,4 +62,13 @@ $(document).ready(function () {
             }
         }
     };
+
+    function enableSpinner() {
+        $("#submit").attr('disabled', 'disabled');
+        $("#spinner").show();
+    }
+    function disableSpinner() {
+        $("#submit").removeAttr('disabled');
+        $("#spinner").hide();
+    }
 });
