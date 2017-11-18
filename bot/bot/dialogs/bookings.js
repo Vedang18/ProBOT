@@ -5,8 +5,7 @@ var moment = require('moment');
 var roomLabel = require('./roomLabel');
 
 var maxBookingAllowed = process.env.MAX_BOOKING_ALLOWED;
-if(maxBookingAllowed)
-{
+if (maxBookingAllowed) {
     maxBookingAllowed = parseInt(maxBookingAllowed);
 } else {
     maxBookingAllowed = 10;
@@ -15,6 +14,9 @@ if(maxBookingAllowed)
 var lib = new builder.Library('booking');
 
 lib.dialog('/ShowBookingStatus', [
+    function (session, args, next) {
+        checkUserAuthorizedOrNot(session, args, next);
+    },
     function (session, args, next) {
         session.sendTyping();
         var intent = args.intent;
@@ -42,7 +44,11 @@ lib.dialog('/ShowBookingStatus', [
         matches: 'ShowBookingStatus'
     });
 
-lib.dialog('/CancelBooking', [function (session, args, next) {
+lib.dialog('/CancelBooking', [
+    function (session, args, next) {
+        checkUserAuthorizedOrNot(session, args, next);
+    },
+    function (session, args, next) {
     session.sendTyping();
     prorigoRest.getMyBookings(function (jsonBody) {
         if (jsonBody.length == 0) {
@@ -92,6 +98,9 @@ function (session, results) {
 
 
 lib.dialog('/bookRoom', [
+    function (session, args, next) {
+        checkUserAuthorizedOrNot(session, args, next);
+    },
     function (session, args, next) {
         session.sendTyping();
         var bookingInfo = parseBookingEntities(args.intent);
@@ -380,6 +389,13 @@ function checkTimings(session, startTime, endTime, dates){
     }
 }
 
+function checkUserAuthorizedOrNot(session, args, next) {
+    prorigoRest.findUserByChannelIdAndUserId(function (json) {
+        next(args);
+    }, function (err) {
+        session.endDialog('something_went_wrong');
+    }, userInfo(session.message.address));
+}
 
 function numToTime(num) {
     var sec_num = parseInt(num, 10); // 2nd param is base
