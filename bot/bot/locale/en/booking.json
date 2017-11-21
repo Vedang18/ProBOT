@@ -1,6 +1,6 @@
 {
     "something_went_wrong": "Something went wrong while contacting server. We are sorry for the inconvinience.\n\n If your domain password has changed, just send change password to intiate password change.",
-    "could_not_determine_booking_time": "Please specify timing details. For e.g. from 4 pm to 5pm or at 4pm for 1 hour",
+    "could_not_determine_booking_time": "Please specify timing details. For e.g. book conf 4 from 4 pm to 5pm or at 4pm for 1 hour",
     "book_room_cancel_confirmation": "This will cancel the current booking operation. Are you sure?",
     "booking_creation_stop": "Room booking operation has been cancelled.",
     "room_cancellation_confirmation": "This will cancel the current room cancellation operation. Are you sure?",
