@@ -3,6 +3,7 @@ var logger = require('../log4js').logger;
 var querystring = require('querystring');
 var util = require('util');
 var prorigoRest = require('./prorigoRest');
+var welcomeBack = require('./welcome-back');
 
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
@@ -103,6 +104,9 @@ bot.use({
             // interrupt and trigger 'help' dialog
             //return session.beginDialog('help:/');
         }
+
+        welcomeBack.welcomeAfterLongTime(session);
+
         if (session.message.address.channelId === 'slack') {
             if (session.message.sourceEvent.SlackMessage) {
                 if (session.message.sourceEvent.SlackMessage.type === 'message') {
