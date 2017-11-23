@@ -5,7 +5,7 @@ $(document).ready(function () {
     var form = $('#login-form');
     $.validator.messages.required = ''; // Disables 'This field is required.' on validation
     if (getUrlParameter('userName')) {
-        $("#page-title").html("Change Password")
+        $("#page-title").html("Update Password")
         $("#username").attr("disabled", "");
         $("#username").val(getUrlParameter('userName'));
     }

@@ -7,7 +7,7 @@ block content
         script(src='login.js')
         div.alert(role='alert' id="alert-msg") Logged in successfully using credentials
         div(id="login-form-container")
-          h1.display-4.m-b-2(id="page-title") Log In
+          h1.display-4.m-b-2(id="page-title") Authenticate
           form.form-group.container(method='POST' id="login-form" novalidate)
             div.form-group
               label(for='email') Username
@@ -22,7 +22,7 @@ block content
             input.form-control(type='hidden' name='userId' value='user')
             input.form-control(type='hidden' name='addressId' value='address')
             div.form-group
-              button.btn.btn-primary(type='submit' id="submit") Log in 
+              button.btn.btn-primary(type='submit' id="submit") Authenticate 
                 span.fa.fa-spinner.fa-pulse(id="spinner" style="font-size:1.5em")
 
 
