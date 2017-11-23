@@ -1,0 +1,8 @@
+Today's date is 23-Nov-2017
+book conf 4 from 3pm for 1 hour on 23 nov & 24 nov
+apart from 23 Nov & 24 Nov 2017 bot also detected for 23 Nov 2018.
+Also bot did not detected 24 Nov 2018, which is inconsistent to say the least
+
+Today's date is 23-Nov-2017
+book conf 4 form 4 pm to 5pm for next weekend
+bot detected date of 04-12-2017

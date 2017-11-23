@@ -303,8 +303,11 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
             start = dateTimeRangeEntity.resolution.values[i].start;
             var bookingDate = moment(start, 'YYYY-MM-DD HH:mm:ss');
             if(bookingDate.isAfter(moment())){
-                bookingDates.push(moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD'));
+                var momentDate = moment(bookingDate.format('YYYY-MM-DD'), 'YYYY-MM-DD');
+                if(momentDate.day() % 6 !== 0){
+                    bookingDates.push(momentDate);
             }
+        }
         }
     } else {
         if (dateRangeEntity) {
@@ -315,8 +318,11 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
             var endDate = new Date(dateRangeEntity.resolution.values[0].end);
             for (var d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
                 if (d.getFullYear() >= thisYear) {
-                    bookingDates.push(moment(d, 'YYYY-MM-DD'));
+                    var momentDate = moment(d, 'YYYY-MM-DD');
+                    if(momentDate.day() % 6 !== 0){ // i.e. the day number is not 0 or 6
+                        bookingDates.push(momentDate);
                 }
+            }
             }
         } else if (dateEntities) {
             for (var i = 0; i < dateEntities.length; i++) {
@@ -326,11 +332,13 @@ function getBookingTimings(dateTimeRangeEntity, dateRangeEntity, dateEntities,
                     var value = dateEntity.resolution.values[j];
                     var valueDate = moment(value.value, 'YYYY-MM-DD'); 
                     if (todaysDate.isBefore(valueDate) || todaysDate.isSame(valueDate)) {
+                        if(valueDate.day() % 6 !== 0){ // i.e. the day number is not 0 or 6
                         bookingDates.push(moment(valueDate));
                     }
                 }
             }
         }
+    }
 
         if (timeRangeEntity) {
             var timeRangeEntityValues = timeRangeEntity.resolution.values;
