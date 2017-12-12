@@ -1,5 +1,7 @@
 package com.probot.services.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,14 +34,13 @@ public class UserService implements IUserService
         return userRepository.findByChannelIdAndUserId(user.getChannelId(), user.getUserId());
     }
 
-    @Override
-    public User save( String channelId, String userId, String username, String password ) throws Exception
+    
+/*    private User save( int uid, String channelId, String userId, String username, String password ) throws Exception
     {
         User user = createUser( channelId, userId, username, password );
-
-        return userRepository.save( user );
+        
     }
-
+*/
     private User createUser( String channelId, String userId, String username, String password ) throws Exception
     {
         // Create user object
@@ -52,13 +53,19 @@ public class UserService implements IUserService
     }
 
     @Override
-    public User save(User user) throws Exception
+    public User save( User user ) throws Exception
     {
-        return save(user.getChannelId(), user.getUserId(), user.getUsername(), user.getPassword());
+        User createdUser = createUser( user.getChannelId(), user.getUserId(), user.getUsername(), user.getPassword() );
+        if( user.getUid() > 0 )
+        {
+            createdUser.setUid( user.getUid() );
+        }
+        createdUser.setAddress( user.getAddress() );
+        return userRepository.save( createdUser );
     }
 
     @Override
-    public User getUserByUserName( String username )
+    public List<User> getUserByUserName( String username )
     {
         return userRepository.findByUsername( username );
     }
@@ -68,6 +75,14 @@ public class UserService implements IUserService
     {
         User createdUser = createUser( user.getChannelId(), user.getUserId(), user.getUsername(), user.getPassword() );
         bookie.navigateToPage( createdUser, false );
+    }
+
+    @Override
+    public void update( User user ) throws Exception
+    {
+        String encrypt = passwordCoder.encrypt( user.getPassword() );
+        user.setPassword( encrypt );
+        userRepository.save( user );
     }
 
 }

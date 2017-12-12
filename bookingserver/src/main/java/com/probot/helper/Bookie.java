@@ -105,14 +105,6 @@ public class Bookie
         logger.debug( "Page filled, clicking button" );
         HtmlPage nextPage = button.click();
         
-        String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( SHOW_MY_BOOKINGS ).toString();
-        if( !nextPage.getBaseURI().equals( pageUrl ) )
-        {
-            errorMessages.add( "Room already booked" );
-            logger.error( errorMessages );
-            throw new InvalidInputException( errorMessages );
-        }
-
         // Error check
         DomNodeList< DomElement > list = page.getElementsByTagName( "span" );
         for( DomElement domElement : list )
@@ -121,6 +113,13 @@ public class Bookie
             {
                 errorMessages.add( domElement.getTextContent() );
             }
+        }
+
+        String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( SHOW_MY_BOOKINGS ).toString();
+        if( !nextPage.getBaseURI().equals( pageUrl ) )
+        {
+            errorMessages.add( "Room already booked" );
+            logger.error( errorMessages );
         }
 
         if( errorMessages.size() > 0 )

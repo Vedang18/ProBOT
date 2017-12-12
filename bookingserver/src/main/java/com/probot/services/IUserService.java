@@ -1,5 +1,7 @@
 package com.probot.services;
 
+import java.util.List;
+
 import com.probot.entities.User;
 
 /**
@@ -10,8 +12,8 @@ public interface IUserService
 {
 
     User getUserByChannelAndUserId(User user);
-    User getUserByUserName(String username);
-    User save(String channelId, String userId, String username, String password) throws Exception;
+    List< User > getUserByUserName(String username);
     User save(User user) throws Exception;
     void testLogin( User user ) throws Exception;
+    void update( User user ) throws Exception;
 }

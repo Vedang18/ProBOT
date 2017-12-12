@@ -54,7 +54,7 @@ public class HolidayController
     }
 
     @RequestMapping( value = "/in", method = RequestMethod.POST )
-    public List< Holidays > getHolidaysAfter( @RequestBody HolidayModel holidayModel ) throws ParseException
+    public List< Holidays > getHolidaysIn( @RequestBody HolidayModel holidayModel ) throws ParseException
     {
         logger.info( "Fetching holidays from " + holidayModel.getStartDate() + "to " + holidayModel.getEndDate() );
         return holidayService.getHolidaysInBetween( holidayModel.getStartDate(), holidayModel.getEndDate() );

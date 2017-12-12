@@ -1,5 +1,7 @@
 package com.probot.repositories;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +16,6 @@ import com.probot.entities.User;
 public interface UserRepository extends CrudRepository<User, Integer>
 {
 	User findByChannelIdAndUserId( String channelId, String userId );
-	User findByUsername( String username );
+	//User findByUsername( String username );
+	List<User> findByUsername( String username );
 }

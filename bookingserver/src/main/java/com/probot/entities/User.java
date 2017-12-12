@@ -2,13 +2,13 @@ package com.probot.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 /**
  * @author Vedang, Created on Sep 17, 2017
@@ -24,11 +24,15 @@ public class User implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int uid;
+    @Version
+    private Long version;
+
     private String channelId;
     private String userId;
-    @Column(unique=true)
     private String username;
     private String password;
+    private String address;
+    
 
     public User()
     {
@@ -77,6 +81,11 @@ public class User implements Serializable
         return uid;
     }
 
+    public void setUid( int uid )
+    {
+        this.uid = uid;
+    }
+
     public String getUserId()
     {
         return userId;
@@ -85,6 +94,26 @@ public class User implements Serializable
     public void setUserId(String userId)
     {
         this.userId = userId;
+    }
+
+    public Long getVersion()
+    {
+        return version;
+    }
+
+    public void setVersion( Long version )
+    {
+        this.version = version;
+    }
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress( String address )
+    {
+        this.address = address;
     }
 
 }

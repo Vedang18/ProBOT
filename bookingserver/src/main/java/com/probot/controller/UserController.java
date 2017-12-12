@@ -1,6 +1,7 @@
 package com.probot.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,12 +36,30 @@ public class UserController
     @RequestMapping( method = RequestMethod.POST )
     public String addUser( @RequestBody User user, HttpServletResponse response ) throws IOException
     {
-        logger.info( "Saving user details of " + user.getUsername() );
+        if( !isValid( user.getUsername() ) || !isValid( user.getPassword() ) )
+        {
+            return JSONObject.quote( "User input is not Valid" );
+        }
         try
         {
             userService.testLogin( user );
-            userService.save( user );
-            return JSONObject.quote( "User added successfully" );
+            User userDetail = userService.getUserByChannelAndUserId( user );
+            if( userDetail == null )
+            {
+                logger.info( "Saving user details of " + user.getUsername() );
+                userService.save( user );
+            }
+            else
+            {
+                logger.info( "Updating user details of " + user.getUsername() );
+                userDetail.setPassword( user.getPassword() );
+                if( user.getAddress() != null && !user.getAddress().isEmpty() )
+                {
+                    userDetail.setAddress( user.getAddress() );
+                }
+                userService.update( userDetail );
+            }
+            return JSONObject.quote( "User added/Updated successfully" );
         }
         catch( FailingHttpStatusCodeException e )
         {
@@ -48,24 +67,24 @@ public class UserController
         }
         catch( Exception e )
         {
-            logger.error( "Failed to add User", e );
-            response.sendError( 500, "Failed to add User" );
+            logger.error( "Failed to add/update User", e );
+            response.sendError( 500, "Failed to add/update  User" );
         }
-        return JSONObject.quote( "Failed to add User" );
+        return JSONObject.quote( "Failed to add/Update User" );
     }
 
     @RequestMapping( value = "/byName", method = RequestMethod.POST )
-    public User getUserByUserName( @RequestBody User user, HttpServletResponse response ) throws IOException
+    public List< User > getUserByUserName( @RequestBody User user, HttpServletResponse response ) throws IOException
     {
         logger.info( "Getting user details of " + user.getUsername() );
-        User userDetail = userService.getUserByUserName( user.getUsername() );
+        List< User > userDetail = userService.getUserByUserName( user.getUsername() );
         if( userDetail == null )
         {
             logger.info( "No user with user Id " + user.getUserId() + " found" );
             response.sendError( 401, "User does not exists" );
             return null;
         }
-        return user;
+        return userDetail;
     }
 
     @RequestMapping( value = "/byChannelUserId", method = RequestMethod.POST )
@@ -79,7 +98,12 @@ public class UserController
             response.sendError( 401, "User does not exists" );
             return null;
         }
-        return user;
+        return userDetail;
+    }
+    
+    private boolean isValid( String input )
+    {
+        return input != null && !input.isEmpty();
     }
 
 }
