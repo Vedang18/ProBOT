@@ -1,52 +1,48 @@
 var builder = require('botbuilder');
 var logger = require('../log4js').logger;
+var querystring = require('querystring');
+var util = require('util');
+var prorigoRest = require('./prorigoRest');
 
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
+var appUrl = process.env.APP_URL;
+
 var DialogLabels = {
     book_room: 'Book a room',
     cancel_booking: 'Cancel room booking',
 };
 
-// This is a dinner reservation bot that uses a waterfall technique to prompt users for input.
+//TODO : give proper msg in Universal Bot also check the logic
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        builder.Prompts.choice(
-            session,
-            'Please enter one of the choice',
-            [DialogLabels.book_room, DialogLabels.cancel_booking],
-            {
-                maxRetries: 3,
-                retryPrompt: 'Not a valid option'
-            });
-    },
-    function (session, result) {
-        if (!result.response) {
-            // exhausted attemps and no selection, start over
-            session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
-            return session.endDialog();
+        var msg = session.message.text.toLowerCase();
+        if (msg == '' || msg == 'hi') {
+            session.send('Hello ' + session.message.address.user.name);
+            session.send('welcome_title');
+            session.send('welcome_info');
+            session.send('Just type away your requests or queries');
+
+            provideloginIfneeded(session);
         }
-
-        // on error, start over
-        session.on('error', function (err) {
-            session.send('Failed with message: %s', err.message);
-            session.endDialog();
-        });
-
-        // continue on proper dialog
-        var selection = result.response.entity;
-        switch (selection) {
-            case DialogLabels.book_room:
-                return session.beginDialog('bookrooms');
-        }   
     }
 ]);
-var room = require('./book-room');
 
-bot.dialog('bookrooms',room );
+var luisAppUrl = process.env.LUIS_MODEL_URL;
+bot.recognizer(new builder.LuisRecognizer(luisAppUrl));
+
+bot.library(require('./dialogs/holidays').createLibrary());
+bot.library(require('./dialogs/bookings').createLibrary());
+
+bot.dialog('help', function (session) {
+    session.endDialog("I can help you in: \n1. Room Booking \n2. Cancel Booking \n3. Show Bookings \n4. Show Holidays")
+}
+).triggerAction({ matches: "help" })
+
+var room = require('./book-room');
 
 bot.on('error', function (e) {
     console.log('And error ocurred', e);
@@ -61,8 +57,6 @@ bot.set('localizerSettings', {
     defaultLocale: 'en'
 });
 
-
-
 // Trigger secondary dialogs when 'settings' or 'support' is called
 bot.use({
     botbuilder: function (session, next) {
@@ -74,7 +68,6 @@ bot.use({
             // interrupt and trigger 'help' dialog
             //return session.beginDialog('help:/');
         }
-
         // continue normal flow
         next();
     }
@@ -121,6 +114,34 @@ function beginDialog(address, dialogId, dialogArgs) {
 function sendMessage(message) {
     bot.send(message);
 }
+
+function provideloginIfneeded(session) {
+    var channelId = session.message.address.channelId;
+    var userId = session.message.address.user.id;
+    prorigoRest.findUserByChannelIdAndUserId(function (json) {
+        //session.userData.userEntry = json;
+        session.endDialog();
+    }, function (err) {
+        var link = util.format(
+            
+            '%s/login?userId=%s&channelId=%s',
+            appUrl, encodeURIComponent(userId), encodeURIComponent(channelId));
+        var msg = new builder.Message(session)
+            .attachments([
+                new builder.HeroCard(session)
+                    .title("You must first login to your account.")
+                    .buttons([
+                        builder.CardAction.openUrl(session, link, "Sign-In")
+                    ])
+            ]);
+            session.send(msg);
+            session.endDialog();
+    }, { userId: userId, channelId: channelId });
+
+
+}
+
+
 
 module.exports = {
     listen: listen,

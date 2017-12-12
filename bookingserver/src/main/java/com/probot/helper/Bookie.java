@@ -191,19 +191,20 @@ public class Bookie
 
     private HtmlPage navigateToPage( User user, String uri, boolean enableJS ) throws Exception, IOException, MalformedURLException
     {
-        final WebClient webClient = new WebClient();
+        WebClient webClient = new WebClient();
         webClient.getOptions().setCssEnabled( false );
         webClient.getOptions().setJavaScriptEnabled( enableJS );
         addCredentials( user, webClient );
 
         String pageUrl = new StringBuilder( "http://" ).append( WEBSITE ).append( uri ).toString();
         HtmlPage page = webClient.getPage( pageUrl );
+        //webClient.setCredentialsProvider(null);
         return page;
     }
 
     public void cancelBooking( User user, Meeting meeting ) throws Exception
     {
-        final WebClient webClient = new WebClient();
+        WebClient webClient = new WebClient();
         addCredentials( user, webClient );
 
         String uri = CANCEL_BOOKING + "/" + meeting.getMeetingId();
@@ -212,8 +213,8 @@ public class Bookie
         URL url = new URL( pageUrl );
         WebRequest requestSettings = new WebRequest( url, HttpMethod.POST );
 
-        Page redirectPage = webClient.getPage( requestSettings );
-        logger.debug( "Confirmed Cancellation " + redirectPage.getWebResponse().getContentAsString() );
+        Page redirectPage = webClient.getPage(requestSettings);
+        logger.debug("Confirmed Cancellation " + redirectPage.getWebResponse().getContentAsString());
     }
 
 
@@ -243,7 +244,7 @@ public class Bookie
      * @param webClient
      * @throws Exception
      */
-    private void addCredentials( User user, final WebClient webClient ) throws Exception
+    private void addCredentials( User user, WebClient webClient ) throws Exception
     {
         DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider)webClient
             .getCredentialsProvider();
