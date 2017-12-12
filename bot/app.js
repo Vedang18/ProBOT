@@ -30,7 +30,7 @@ app.get('/login', function (req, res, next) {
 app.get('/changePassword', function (req, res, next) {
     var userId = req.query.userName;
     res.render('change-password', { title: 'ProBOT', userId: userId });
-})
+});
 
 // Register Bot
 var bot = require('./bot');
@@ -74,6 +74,12 @@ app.post('/api/sendmessage', function (req, res) {
     bot.sendMessage(txtMsg, JSON.parse(addressString));
     res.status(200).send();
 });
+
+app.get('/toggleMode', function (req, res, next) {
+    bot.botToggleMode();
+    res.status(200).send();
+});
+
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

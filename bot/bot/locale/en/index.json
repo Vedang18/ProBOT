@@ -5,5 +5,6 @@
     "welcome_sorry": "I am sorry, I couldn't understand you. Send Hi!",
     "help": "Help",
     "thank_you": "Have a nice day!",
-    "something_went_wrong": "Something went wrong while contacting server. We are sorry for the inconvinience."
+    "something_went_wrong": "Something went wrong while contacting server. We are sorry for the inconvinience.",
+    "bot_under_maintenance": "Bot is under maintenance. We will be back in a while. We are sorry for the inconvinience."
 }

@@ -10,6 +10,11 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
+/*  0 - Maintainence Mode
+    1 - Bot Mode
+*/
+botMode = 1
+
 var appUrl = process.env.APP_URL;
 
 var bot = new builder.UniversalBot(connector, [
@@ -98,11 +103,9 @@ bot.use({
         var text = session.message.text.toLowerCase();
         logger.debug('message to bot:');
         logger.debug(session.message);
-        var supportRegex = localizedRegex(session, ['help']);
-
-        if (supportRegex.test(text)) {
-            // interrupt and trigger 'help' dialog
-            //return session.beginDialog('help:/');
+        if (botMode === 0) {
+            session.send("bot_under_maintenance");
+            return;
         }
 
         welcomeBack.welcomeAfterLongTime(session);
@@ -203,8 +206,18 @@ function createSignInLink(session, userId, channelId, addressString) {
     session.send('You can also use the following to register yourself:' + '\n\n' + link);
 }
 
+function botToggleMode() {
+    if (botMode === 1) {
+        botMode = 0;
+    } else {
+        botMode = 1;
+    }
+    logger.warn(`Toggle mode changed to ${botMode}`);
+}
+
 module.exports = {
     listen: listen,
     beginDialog: beginDialog,
-    sendMessage: sendMessage
+    sendMessage: sendMessage,
+    botToggleMode: botToggleMode
 };
