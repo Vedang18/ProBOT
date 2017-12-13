@@ -13,7 +13,7 @@ var connector = new builder.ChatConnector({
 /*  0 - Maintainence Mode
     1 - Bot Mode
 */
-botMode = 1
+botMode = parseInt(process.env.BOT_MODE);
 
 var appUrl = process.env.APP_URL;
 
