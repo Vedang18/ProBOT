@@ -16,7 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use('/admin', require('./adminApp'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/admin', express.static(path.join(__dirname, 'admin', 'build')));
 
 // Register your web app routes here
 app.get('/', function (req, res, next) {
@@ -79,7 +81,6 @@ app.get('/toggleMode', function (req, res, next) {
     bot.botToggleMode();
     res.status(200).send();
 });
-
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
