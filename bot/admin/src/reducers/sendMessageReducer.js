@@ -1,8 +1,8 @@
-const initalState = {
-    status = {}
+const initialState = {
+    status: {}
 }
 
-export default (state = initialStata, action) => {
+export default (state = initialState, action) => {
     switch(action.type){
         case "SEND_MESSAGE_PENDING":
             break;

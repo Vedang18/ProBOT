@@ -3,7 +3,7 @@ import SendMessageComponent from '../components/sendMessageComponent';
 
 const mapStateToProps = (state) => {
     return {
-        users: state.userReducer.users;
+        // users: state.userReducer.users;
     };
 }
 
