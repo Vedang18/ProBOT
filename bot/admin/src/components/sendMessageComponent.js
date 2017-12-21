@@ -46,7 +46,25 @@ class SendMessageComponent extends React.Component {
   }
 
   handleRowClick = (event, id) => {
-    console.log(data.filter(d => id == d.id));
+    const { selected } = this.state;
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) { // item was not selected earlier; now is selected
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0){ // 1st item was selected, remove it
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) { // last item was selected, remove it
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) { // some item in between was selected, remove it
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex+1)
+      );
+    }
+    // this.setState({selected: newSelected}, function(){ console.log(data.filter(d => this.state.selected.indexOf(d.id) !== -1))});
+    this.setState({selected: newSelected});
+    
   }
 
   handleChange = (event) => {
@@ -57,7 +75,7 @@ class SendMessageComponent extends React.Component {
 
   }
 
-  isSelected = (id) => { this.state.selected.indexOf(id) !== -1 }
+  isSelected = (id) => this.state.selected.indexOf(id) !== -1;
 
   render() {
     return (
@@ -67,13 +85,14 @@ class SendMessageComponent extends React.Component {
           </EnhancedTableHead>
           <TableBody>
             {data.map(n => {
-
+              const isSelected = this.isSelected(n.id);
               return (
                 <TableRow
+                  hover
                   key={n.id}
                   onClick={event => this.handleRowClick(event, n.id)}
                 >
-                  <TableCell><Checkbox /></TableCell>
+                  <TableCell><Checkbox checked={isSelected} /></TableCell>
                   <TableCell>{n.name}</TableCell>
                   <TableCell>{n.channel}</TableCell>
                 </TableRow>
