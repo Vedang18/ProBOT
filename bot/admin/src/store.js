@@ -6,10 +6,10 @@ import userReducer from './reducers/userReducer';
 import sendMessageReducer from './reducers/sendMessageReducer';
 
 export default createStore(
-    combineReducers({
-        userReducer,
-        sendMessageReducer
-    }),
-    {},
-    applyMiddleware(createLogger(), thunk, promise())
+  combineReducers({
+    userReducer,
+    sendMessageReducer
+  }),
+  {},
+  applyMiddleware(createLogger(), thunk, promise())
 );
